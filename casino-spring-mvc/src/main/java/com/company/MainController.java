@@ -13,8 +13,6 @@ import java.text.ParseException;
 @Controller
 public class MainController {
 
-    @Autowired
-    private DAO dao;
 
 	@GetMapping("/index")
     public String getIndex(Model model) {

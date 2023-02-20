@@ -1,4 +1,4 @@
-package com.company;
+package com.company.dao;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;

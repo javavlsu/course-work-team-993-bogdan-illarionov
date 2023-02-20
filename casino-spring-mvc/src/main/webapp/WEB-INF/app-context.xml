@@ -12,25 +12,19 @@
         http://www.springframework.org/schema/mvc
         https://www.springframework.org/schema/mvc/spring-mvc.xsd"
 >
-
     <context:component-scan base-package="com.company"/>
-    <mvc:annotation-driven/>
-    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="prefix" value="/WEB-INF/view/"/>
-        <property name="suffix" value=".jsp"/>
-    </bean>
 
-    <bean id="dbContext" class="com.company.DAO" scope="singleton">
-        <!-- collaborators and configuration for this bean go here -->
+    <!--<bean id="dbContext" class="com.company.dao.DAO" scope="singleton">
+        &lt;!&ndash; collaborators and configuration for this bean go here &ndash;&gt;
     </bean>
 
     <bean id="productDao" class="com.company.ProductDao" scope="singleton">
-        <!-- collaborators and configuration for this bean go here -->
+        &lt;!&ndash; collaborators and configuration for this bean go here &ndash;&gt;
     </bean>
 
     <bean id="appHandler" class="com.company.AppHandler" scope="singleton">
         <constructor-arg ref="dbContext"/>
-    </bean>
+    </bean>-->
     <!-- ... -->
 
 </beans>

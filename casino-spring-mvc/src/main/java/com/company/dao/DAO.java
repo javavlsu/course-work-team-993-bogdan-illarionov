@@ -1,4 +1,4 @@
-package com.company;
+package com.company.dao;
 
 import java.sql.*;
 import java.util.ArrayList;
