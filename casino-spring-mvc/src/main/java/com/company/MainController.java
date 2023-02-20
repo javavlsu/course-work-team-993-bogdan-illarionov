@@ -19,7 +19,13 @@ public class MainController {
 
         System.out.println(123);
 
-        return "index";
+        return "/index";
+    }
+
+    @GetMapping("/lots")
+    public String getLots(Model model)
+    {
+        return "/lots";
     }
 
     /*
