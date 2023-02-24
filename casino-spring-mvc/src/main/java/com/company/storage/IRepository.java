@@ -17,4 +17,10 @@ public interface IRepository<TEntity> {
      * @return Сущность типа {@link TEntity}
      */
     public TEntity getById(long id);
+
+    /**
+     * Добавляет сущность в хранилище.
+     * @param entity сущность, которую нужно добавить.
+     */
+    public void add(TEntity entity);
 }
