@@ -1,5 +1,6 @@
 package com.company.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,7 +23,7 @@ public final class Lot {
         long id,
         String name,
         String description,
-        List<Outcome> outcomes){
+        List<Outcome> outcomes) throws IllegalArgumentException {
         _id = id;
 
         if (name.isBlank())
