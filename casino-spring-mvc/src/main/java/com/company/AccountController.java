@@ -1,25 +1,22 @@
 package com.company;
 
-import com.company.bean.User;
-import com.company.dao.DAOClass;
-import com.company.dao.UserDAO;
+import com.company.models.account.User;
+import com.company.storage.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.sql.SQLException;
-
 @Controller
 public class AccountController {
 
     @Autowired
-    private DAOClass<User> dao;
+    private IUserRepository userRepository;
 
     @GetMapping("/users")
     public String getUsers(Model model)
     {
-        User user  = dao.getById(1);;
+        User user  = userRepository.getById(1);;
 
         String login = user.getLogin();
 

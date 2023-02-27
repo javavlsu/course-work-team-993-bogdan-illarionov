@@ -26,4 +26,8 @@
     <bean id="dao" class="com.company.dao.UserDAO">
         <property name="template" ref="jt"></property>
     </bean>
+
+    <bean id="userRepository" class="com.company.storage.UserRepository">
+        <property name="dao" ref="dao"></property>
+    </bean>
 </beans>
