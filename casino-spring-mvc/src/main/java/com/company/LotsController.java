@@ -1,3 +1,4 @@
+/*
 package com.company;
 
 import com.company.models.Bet;
@@ -78,3 +79,4 @@ public class LotsController {
 
 
 }
+*/

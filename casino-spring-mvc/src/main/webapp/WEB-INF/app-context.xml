@@ -1,30 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
        xsi:schemaLocation="
         http://www.springframework.org/schema/beans
         https://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
-        https://www.springframework.org/schema/context/spring-context.xsd
-        http://www.springframework.org/schema/mvc
-        https://www.springframework.org/schema/mvc/spring-mvc.xsd"
->
+        https://www.springframework.org/schema/context/spring-context.xsd">
+
+
     <context:component-scan base-package="com.company"/>
 
-    <!--<bean id="dbContext" class="com.company.dao.DAO" scope="singleton">
-        &lt;!&ndash; collaborators and configuration for this bean go here &ndash;&gt;
+    <bean id="stub" class="com.company.dao.PostgreSQLImplementation" scope="singleton">
     </bean>
 
-    <bean id="productDao" class="com.company.ProductDao" scope="singleton">
-        &lt;!&ndash; collaborators and configuration for this bean go here &ndash;&gt;
+    <bean id="userDAO" class="com.company.dao.UserDAO">
+        <constructor-arg ref="stub"/>
     </bean>
-
-    <bean id="appHandler" class="com.company.AppHandler" scope="singleton">
-        <constructor-arg ref="dbContext"/>
-    </bean>-->
-    <!-- ... -->
 
 </beans>
