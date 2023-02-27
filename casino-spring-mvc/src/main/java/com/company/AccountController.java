@@ -1,6 +1,7 @@
 package com.company;
 
 import com.company.bean.User;
+import com.company.dao.DAOClass;
 import com.company.dao.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,12 +14,12 @@ import java.sql.SQLException;
 public class AccountController {
 
     @Autowired
-    private UserDAO users;
+    private DAOClass<User> dao;
 
     @GetMapping("/users")
     public String getUsers(Model model)
     {
-        User user  = users.getById(1);;
+        User user  = dao.getById(1);;
 
         String login = user.getLogin();
 

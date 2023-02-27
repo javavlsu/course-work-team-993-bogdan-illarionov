@@ -17,13 +17,6 @@ public class User {
     private String email;
 
     // Getter and setter methods
-    public User(String login, String password, String email)
-    {
-        setLogin(login);
-        setPassword(password);
-        setEmail(email);
-    }
-
 
     // Getter
 

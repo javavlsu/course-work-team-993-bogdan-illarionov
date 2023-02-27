@@ -3,6 +3,7 @@ package com.company.dao;
 import com.company.bean.User;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -13,171 +14,38 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class UserDAO implements DAOClass<User> {
-    private static final String DELETE = "DELETE FROM users WHERE id=?";
-    private static final String FIND_ALL = "SELECT * FROM users ORDER BY id";
-    private static final String FIND_BY_ID = "SELECT * FROM users WHERE id=?";
-    private static final String INSERT = "INSERT INTO users(Login, Password, Email) VALUES(?, ?, ?)";
-    private static final String UPDATE = "UPDATE users SET Login=?, Password=?, Email=? WHERE id=?";
 
-    private final PostgreSQLImplementation implementation;
+    JdbcTemplate template;
 
-    public UserDAO(PostgreSQLImplementation impl) {
-        implementation = impl;
+    public void setTemplate(JdbcTemplate template) {
+        this.template = template;
     }
-
-    @Override
-    public void create(User entity) {
-        Connection conn = null;
-
-        try {
-            conn = implementation.getConnection();
-
-            try (var stmt = conn.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
-                stmt.setString(1, entity.getLogin());
-                stmt.setString(2, entity.getPassword());
-                stmt.setString(3, entity.getEmail());
-
-                int result = stmt.executeUpdate();
-                ResultSet rs = stmt.getGeneratedKeys();
-
-                System.out.println("Info: Rows affected " + result);
-
-                if (rs.next()) {
-                    entity.setId(rs.getInt(1));
-
-                    System.out.println("Info: Object added: " + entity);
-                }
-            } catch (SQLException e) {
-                System.out.println("QueryError " + e.getErrorCode() + ": " + e.getMessage());
+    public void create(User entity){
+        String sql="insert into Users(Login, Password, Email) Values('"+entity.getLogin()+"',"+entity.getPassword()+",'"+entity.getEmail()+"')";
+        template.update(sql);
+    }
+    public void update(User entity){
+        String sql="update users set login='"+entity.getLogin()+"', password="+entity.getPassword()+",email='"+entity.getEmail()+"' where id="+entity.getId()+"";
+        template.update(sql);
+    }
+    public void delete(long id){
+        String sql="delete from Users where id="+id+"";
+        template.update(sql);
+    }
+    public User getById(long id){
+        String sql="select * from Users where id=?";
+        return template.queryForObject(sql, new Object[]{id},new BeanPropertyRowMapper<User>(User.class));
+    }
+    public List<User> getAll(){
+        return template.query("select * from Users",new RowMapper<User>(){
+            public User mapRow(ResultSet rs, int row) throws SQLException {
+                User e=new User();
+                e.setId(rs.getInt(1));
+                e.setLogin(rs.getString(2));
+                e.setPassword(rs.getString(3));
+                e.setEmail(rs.getString(4));
+                return e;
             }
-
-            implementation.close(conn);
-        } catch (SQLException e) {
-            System.out.println("ConnectionError " + e.getErrorCode() + ": " + e.getMessage());
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-
+        });
     }
-
-    @Override
-    public void update(User entity) {
-        Connection conn = null;
-
-        try {
-            conn = implementation.getConnection();
-
-            try (var stmt = conn.prepareStatement(UPDATE)) {
-                stmt.setString(1, entity.getLogin());
-                stmt.setString(2, entity.getPassword());
-                stmt.setString(3, entity.getEmail());
-                stmt.setLong(4, entity.getId());
-
-                stmt.executeUpdate();
-
-                System.out.println("Info: Object updated: " + entity);
-            } catch (SQLException e) {
-                System.out.println("QueryError " + e.getErrorCode() + ": " + e.getMessage());
-            }
-
-            implementation.close(conn);
-        } catch (SQLException e) {
-            System.out.println("ConnectionError " + e.getErrorCode() + ": " + e.getMessage());
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-    }
-
-    @Override
-    public void delete(long id) {
-        Connection conn = null;
-
-        try {
-            conn = implementation.getConnection();
-
-            try (var stmt = conn.prepareStatement(DELETE)) {
-                stmt.setLong(1, id);
-
-                int result = stmt.executeUpdate();
-
-                System.out.println("Info: One row deleted " + result + " by id " + id);
-            } catch (SQLException e) {
-                System.out.println("QueryError " + e.getErrorCode() + ": " + e.getMessage());
-            }
-
-            implementation.close(conn);
-        } catch (SQLException e) {
-            System.out.println("ConnectionError " + e.getErrorCode() + ": " + e.getMessage());
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-    }
-
-    @Override
-    public User getById(long id) {
-        Connection conn = null;
-        User movie = null;
-
-        try {
-            conn = implementation.getConnection();
-
-            try (var stmt = conn.prepareStatement(FIND_BY_ID)) {
-                stmt.setLong(1, id);
-
-                ResultSet rs = stmt.executeQuery();
-                int count = 0;
-                if (rs.next()) {
-                    movie = new User(rs.getString("login"), rs.getString("password"), rs.getString("email"));
-                    movie.setId(id);
-                    count++;
-                }
-
-                System.out.println("Info: Return " + count+" row by id " + id);
-            } catch (SQLException e) {
-                System.out.println("QueryError " + e.getErrorCode() + ": " + e.getMessage());
-            }
-
-            implementation.close(conn);
-        } catch (SQLException e) {
-            System.out.println("ConnectionError " + e.getErrorCode() + ": " + e.getMessage());
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-
-        return movie;
-    }
-
-    @Override
-    public List<User> getAll() {
-        Connection conn = null;
-        List<User> list = new LinkedList<User>();
-
-        try {
-            conn = implementation.getConnection();
-
-            try (var stmt = conn.prepareStatement(FIND_ALL)) {
-                ResultSet rs = stmt.executeQuery();
-
-                while (rs.next()) {
-                    var movie = new User(rs.getString("login"), rs.getString("password"), rs.getString("email"));
-                    movie.setId(rs.getLong("id"));
-
-                    list.add(movie);
-                }
-
-                System.out.println("Info: Rows retuned " + list.size());
-            } catch (SQLException e) {
-                System.out.println("QueryError " + e.getErrorCode() + ": " + e.getMessage());
-            }
-
-            implementation.close(conn);
-        } catch (SQLException e) {
-            System.out.println("ConnectionError " + e.getErrorCode() + ": " + e.getMessage());
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-
-        return list;
-    }
-
 }
