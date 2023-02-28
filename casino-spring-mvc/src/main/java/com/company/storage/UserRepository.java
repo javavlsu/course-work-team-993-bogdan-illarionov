@@ -27,32 +27,32 @@ public class UserRepository implements IUserRepository{
         return newUser;
     }
 
-    private DAOClass<com.company.bean.User> dao;
+    private DAOClass<com.company.bean.User> _dao;
 
-    public void setDao(DAOClass<com.company.bean.User> dao) {
-        this.dao = dao;
+    public void setDao(DAOClass<com.company.bean.User> _dao) {
+        this._dao = _dao;
     }
 
     @Override
     public Iterable<User> getAll() {
-        return dao.getAll().stream().map((x) -> ConvertTo(x)).collect(Collectors.toList());
+        return _dao.getAll().stream().map((x) -> ConvertTo(x)).collect(Collectors.toList());
     }
 
     @Override
     public User getById(long id) {
-        return ConvertTo(dao.getById(id));
+        return ConvertTo(_dao.getById(id));
     }
 
     @Override
     public void add(User user) {
         var storageUser = ConvertBack(user);
 
-        dao.create(storageUser);
+        _dao.create(storageUser);
     }
 
     @Override
     public boolean isCanLogIn(User user) {
-        var storageUser = ((UserDAO)dao).getByLogin(user.getLogin());
+        var storageUser = ((UserDAO) _dao).getByLogin(user.getLogin());
 
         if (storageUser == null || !storageUser.getPassword().equals(user.getPassword().getValue()))
             return false;
@@ -70,17 +70,17 @@ public class UserRepository implements IUserRepository{
             return;
         }
 
-        if (!user.getLogin().equals(login) && (((UserDAO)dao).getByLogin(login) != null))
+        if (!user.getLogin().equals(login) && (((UserDAO) _dao).getByLogin(login) != null))
         {
             return;
         }
 
-        var storageUser = ((UserDAO)dao).getByLogin(user.getLogin());
+        var storageUser = ((UserDAO) _dao).getByLogin(user.getLogin());
 
         storageUser.setEmail(email);
         storageUser.setLogin(login);
         storageUser.setPassword(password);
 
-        dao.update(storageUser);
+        _dao.update(storageUser);
     }
 }
