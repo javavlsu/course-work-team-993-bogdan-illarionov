@@ -68,7 +68,7 @@ public class LotsController {
         _betRepository.add(bet);
 
         var lot = _lotRepository.getById(betViewModel.lotId);
-        var result = _lotsPlayer.PlayLot(lot);
+        var result = _lotsPlayer.playLot(lot, bet);
 
         model.addAttribute("lot", lot);
         model.addAttribute("result", result);

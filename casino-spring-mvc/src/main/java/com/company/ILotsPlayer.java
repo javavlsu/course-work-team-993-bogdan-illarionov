@@ -1,5 +1,6 @@
 package com.company;
 
+import com.company.models.Bet;
 import com.company.models.Lot;
 import com.company.models.PlayingResult;
 
@@ -13,5 +14,5 @@ public interface ILotsPlayer {
      * @param playingLot Лот, который будет воспроизводиться.
      * @return Результат игры типа {@link PlayingResult}
      */
-    public PlayingResult PlayLot(Lot playingLot);
+    public PlayingResult playLot(Lot playingLot, Bet bet);
 }
