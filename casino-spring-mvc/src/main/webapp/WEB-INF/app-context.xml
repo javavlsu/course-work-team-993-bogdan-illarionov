@@ -14,8 +14,22 @@
 >
     <context:component-scan base-package="com.company"/>
 
+    <bean id="lotRepository" class="com.company.storage.LotRepository" scope="singleton">
+    </bean>
+
+    <bean id="betRepository" class="com.company.storage.BetRepository" scope="singleton">
+    </bean>
+
+    <bean id="lotsPlayer" class="com.company.LotsPlayer" scope="singleton">
+    </bean>
+
+    <bean id="lotsController" class="com.company.LotsController" scope="request">
+        <constructor-arg ref="lotRepository"/>
+        <constructor-arg ref="betRepository"/>
+        <constructor-arg ref="lotsPlayer"/>
+    </bean>
+
     <!--<bean id="dbContext" class="com.company.dao.DAO" scope="singleton">
-        &lt;!&ndash; collaborators and configuration for this bean go here &ndash;&gt;
     </bean>
 
     <bean id="productDao" class="com.company.ProductDao" scope="singleton">
