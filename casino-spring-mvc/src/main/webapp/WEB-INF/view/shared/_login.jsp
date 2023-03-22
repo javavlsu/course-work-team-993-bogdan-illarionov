@@ -9,7 +9,7 @@
 
 <ul class="navbar-nav">
   <c:choose>
-    <c:when test="${false}">
+    <c:when test="${false || isLogin}">
       <li class="nav-item">
         <a id="manage" class="nav-link text-dark" href="${profileLink}"
           >Hello, world!
