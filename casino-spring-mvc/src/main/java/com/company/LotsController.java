@@ -7,7 +7,6 @@ import com.company.storage.LotRepositoryService;
 import com.company.viewModels.BetViewModel;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,8 +19,7 @@ public class LotsController {
    // private LotRepositoryService lotRepositoryService;
 
     @Autowired
-    @Qualifier
-    GameOutcomesRepo gameOutcomesRepo;
+    private GameOutcomesRepoService gameOutcomesRepo;
 
     @GetMapping("/lots")
     public String getLots(Model model) {
