@@ -15,14 +15,16 @@ import java.text.ParseException;
 @Controller
 public class MainController {
 
-/*
-	@GetMapping("/index")
+    @GetMapping("/index")
     public String getIndex(Model model) {
 
         System.out.println(123);
 
         return "/index";
     }
+
+/*
+
 
     @GetMapping("/lots")
     public String getLots(Model model)
