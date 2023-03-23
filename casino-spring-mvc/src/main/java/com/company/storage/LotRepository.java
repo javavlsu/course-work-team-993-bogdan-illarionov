@@ -20,6 +20,51 @@ public class LotRepository implements IRepository<Lot> {
                             new Outcome(1,"1", 1.1),
                             new Outcome(2,"2", 1.1),
                             new Outcome(3,"3", 1.1)
+                    )),
+                    new Lot(2,"lot 2 name", "some desc", Arrays.asList(
+                            new Outcome(1,"1", 1.1),
+                            new Outcome(2,"2", 1.1),
+                            new Outcome(3,"3", 1.1)
+                    )),
+                    new Lot(3,"lot 3 name", "some desc", Arrays.asList(
+                            new Outcome(1,"1", 1.1),
+                            new Outcome(2,"2", 1.1),
+                            new Outcome(3,"3", 1.1)
+                    )),
+                    new Lot(4,"lot 4 name", "some desc", Arrays.asList(
+                            new Outcome(1,"1", 1.1),
+                            new Outcome(2,"2", 1.1),
+                            new Outcome(3,"3", 1.1)
+                    )),
+                    new Lot(5,"lot 5 name", "some desc", Arrays.asList(
+                            new Outcome(1,"1", 1.1),
+                            new Outcome(2,"2", 1.1),
+                            new Outcome(3,"3", 1.1)
+                    )),
+                    new Lot(6,"lot 6 name", "some desc", Arrays.asList(
+                            new Outcome(1,"1", 1.1),
+                            new Outcome(2,"2", 1.1),
+                            new Outcome(3,"3", 1.1)
+                    )),
+                    new Lot(7,"lot 7 name", "some desc", Arrays.asList(
+                            new Outcome(1,"1", 1.1),
+                            new Outcome(2,"2", 1.1),
+                            new Outcome(3,"3", 1.1)
+                    )),
+                    new Lot(8,"lot 8 name", "some desc", Arrays.asList(
+                            new Outcome(1,"1", 1.1),
+                            new Outcome(2,"2", 1.1),
+                            new Outcome(3,"3", 1.1)
+                    )),
+                    new Lot(9,"lot 9 name", "some desc", Arrays.asList(
+                            new Outcome(1,"1", 1.1),
+                            new Outcome(2,"2", 1.1),
+                            new Outcome(3,"3", 1.1)
+                    )),
+                    new Lot(10,"lot 10 name", "some desc", Arrays.asList(
+                            new Outcome(1,"1", 1.1),
+                            new Outcome(2,"2", 1.1),
+                            new Outcome(3,"3", 1.1)
                     ))
             )
     );
