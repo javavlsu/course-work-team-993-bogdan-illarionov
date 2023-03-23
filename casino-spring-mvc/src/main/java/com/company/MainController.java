@@ -7,6 +7,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
 import java.sql.SQLException;
 import java.text.ParseException;
 

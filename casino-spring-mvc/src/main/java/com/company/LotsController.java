@@ -5,27 +5,33 @@ import com.company.storage.GameOutcomesRepoService;
 import com.company.storage.ILotRepository;
 import com.company.storage.LotRepositoryService;
 import com.company.viewModels.BetViewModel;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping(path = "/lots")
+@RequestMapping
 public class LotsController {
     //@Autowired
    // private LotRepositoryService lotRepositoryService;
 
     @Autowired
-    private GameOutcomesRepoService gameOutcomesRepo;
+    private LotRepositoryService gameOutcomesRepo;
 
     @GetMapping("/lots")
     public String getLots(Model model) {
         //var lots = lotRepository.findAll();
 
         //model.addAttribute("lots", lotRepository.findAll();
+
+        var outcomes = gameOutcomesRepo.lotRepository.findAll();
+
+        var a = outcomes.stream().findFirst().get();
+
+        var b = a.getGameOutcomes();
 
         return "/lots";
     }
@@ -39,7 +45,7 @@ public class LotsController {
 
     @PostMapping("lots/play")
     public String postLotPlay(
-        @Valid @ModelAttribute BetViewModel betViewModel,
+        @ModelAttribute BetViewModel betViewModel,
         BindingResult bindingResult,
         Model model)
     {

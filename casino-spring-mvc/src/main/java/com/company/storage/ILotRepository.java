@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 /**
  * Хранилище игр.
  */
-
-public interface ILotRepository extends CrudRepository<StorageLot, Long> {
+@Repository
+public interface ILotRepository extends JpaRepository<StorageLot, Long> {
 
 }

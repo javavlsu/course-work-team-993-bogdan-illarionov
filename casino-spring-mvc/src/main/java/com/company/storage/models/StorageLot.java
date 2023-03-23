@@ -2,6 +2,9 @@ package com.company.storage.models;
 
 import jakarta.persistence.*;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -16,8 +19,8 @@ public class StorageLot {
     @Column(name = "description")
     private String description;
 
-    @CollectionTable(name = "game_outcomes", joinColumns = @JoinColumn(name = "lot_id"))
-    private Set<GameOutcome> gameOutcomes;
+    @OneToMany(mappedBy = "lot", fetch = FetchType.EAGER)
+    private Collection<GameOutcome> gameOutcomes;
 
 
     public Long getId() {
@@ -41,10 +44,10 @@ public class StorageLot {
         this.description = description;
     }
 
-    public Set<GameOutcome> getGameOutcomes() {
+    public Collection<GameOutcome> getGameOutcomes() {
         return gameOutcomes;
     }
-    public void setGameOutcomes(Set<GameOutcome> gameOutcomes) {
+    public void setGameOutcomes(Collection<GameOutcome> gameOutcomes) {
         this.gameOutcomes = gameOutcomes;
     }
 }
