@@ -1,33 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
        xsi:schemaLocation="
         http://www.springframework.org/schema/beans
         https://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
-        https://www.springframework.org/schema/context/spring-context.xsd">
-
-
+        https://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        https://www.springframework.org/schema/mvc/spring-mvc.xsd"
+>
     <context:component-scan base-package="com.company"/>
 
-    <bean id="ds" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="org.postgresql.Driver"></property>
-        <property name="url" value="jdbc:postgresql://localhost:5432/casino"></property>
-        <property name="username" value="postgres"></property>
-        <property name="password" value="root"></property>
+    <bean id="lotRepository" class="com.company.storage.LotRepository" scope="singleton">
     </bean>
 
-    <bean id="jt" class="org.springframework.jdbc.core.JdbcTemplate">
-        <property name="dataSource" ref="ds"></property>
+    <bean id="betRepository" class="com.company.storage.BetRepository" scope="singleton">
     </bean>
 
-    <bean id="dao" class="com.company.dao.UserDAO">
-        <property name="template" ref="jt"></property>
+    <bean id="lotsPlayer" class="com.company.LotsPlayer" scope="singleton">
     </bean>
 
-    <bean id="userRepository" class="com.company.storage.UserRepository">
-        <property name="dao" ref="dao"></property>
+    <bean id="lotsController" class="com.company.LotsController" scope="request">
+        <constructor-arg ref="lotRepository"/>
+        <constructor-arg ref="betRepository"/>
+        <constructor-arg ref="lotsPlayer"/>
     </bean>
+
+    <!--<bean id="dbContext" class="com.company.dao.DAO" scope="singleton">
+    </bean>
+
+    <bean id="productDao" class="com.company.ProductDao" scope="singleton">
+        &lt;!&ndash; collaborators and configuration for this bean go here &ndash;&gt;
+    </bean>
+
+    <bean id="appHandler" class="com.company.AppHandler" scope="singleton">
+        <constructor-arg ref="dbContext"/>
+    </bean>-->
+    <!-- ... -->
+
 </beans>

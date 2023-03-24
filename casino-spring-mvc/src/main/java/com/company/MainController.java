@@ -13,8 +13,7 @@ import java.text.ParseException;
 @Controller
 public class MainController {
 
-
-	@GetMapping("/index")
+    @GetMapping("/index")
     public String getIndex(Model model) {
 
         System.out.println(123);
@@ -22,13 +21,16 @@ public class MainController {
         return "/index";
     }
 
+/*
+
+
     @GetMapping("/lots")
     public String getLots(Model model)
     {
         return "/lots";
     }
 
-    /*
+
     @GetMapping("/hello")
     public String handle(Model model) throws SQLException, ClassNotFoundException, ParseException {
         model.addAttribute("message", "Hello World!");

@@ -81,6 +81,16 @@ public class AccountController {
         return "/account/register";
     }
 
+    @GetMapping("/account/tmplogin")
+    public String getTmpLogin(Model model) {
+
+        System.out.println(345);
+
+        model.addAttribute("isLogin", true);
+
+        return "/index";
+    }
+
     @GetMapping("/account/profile")
     public String getProfile(Model model) {
 
