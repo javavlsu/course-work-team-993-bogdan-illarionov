@@ -1,13 +1,12 @@
 package com.company.models;
 
-import java.util.List;
 import java.util.Set;
 
 /**
  * Игровой лот.
  */
 public final class Lot {
-    private final long _id;
+    private final Long _id;
     private final String _name;
     private final String _description;
     private final Set<Outcome> _outcomes;
@@ -21,7 +20,7 @@ public final class Lot {
      * @param outcomes Исходы лота.
      */
     public Lot(
-        long id,
+        Long id,
         String name,
         String description,
         Set<Outcome> outcomes,
@@ -49,7 +48,7 @@ public final class Lot {
      * Возвращает идентификатор игрового лота.
      * @return Объект типа {@link long}.
      */
-    public long getId(){
+    public Long getId(){
         return _id;
     }
 

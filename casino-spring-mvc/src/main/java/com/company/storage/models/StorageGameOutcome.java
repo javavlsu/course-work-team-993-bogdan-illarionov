@@ -1,5 +1,7 @@
 package com.company.storage.models;
 
+import com.company.models.GameOutcome;
+import com.company.models.Outcome;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -18,9 +20,6 @@ public class StorageGameOutcome {
     @JoinColumn(name="lot_id")
     private StorageLot lot;
 
-    @ManyToMany(mappedBy = "relatedGameOutcomes")
-    private Set<StorageOutcome> relatedOutcomes;
-
     public StorageGameOutcome(){
 
     }
@@ -29,6 +28,13 @@ public class StorageGameOutcome {
         this.id = id;
         this.view = view;
         this.lot = lot;
+    }
+
+    public static GameOutcome fromStorageModel(StorageGameOutcome storageGameOutcome){
+        return new GameOutcome(
+                storageGameOutcome.getId(),
+                storageGameOutcome.getView(),
+                storageGameOutcome.getLot().getId());
     }
 
     public Long getId() {
@@ -50,13 +56,5 @@ public class StorageGameOutcome {
     }
     public void setLot(StorageLot lot) {
         this.lot = lot;
-    }
-
-    public Set<StorageOutcome> getRelatedOutcomes() {
-        return relatedOutcomes;
-    }
-
-    public void setRelatedOutcomes(Set<StorageOutcome> relatedOutcomes) {
-        this.relatedOutcomes = relatedOutcomes;
     }
 }

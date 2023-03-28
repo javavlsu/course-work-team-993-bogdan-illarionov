@@ -1,9 +1,12 @@
 package com.company.storage.models;
 
+import com.company.models.Lot;
+import com.company.storage.ILotRepository;
 import jakarta.persistence.*;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "lots")
@@ -22,6 +25,36 @@ public class StorageLot {
 
     @OneToMany(mappedBy = "lot", fetch = FetchType.EAGER)
     private Set<StorageOutcome> outcomes;
+
+    public StorageLot(){
+
+    }
+
+    public StorageLot(
+            Long id,
+            String name,
+            String description,
+            Set<StorageGameOutcome> gameOutcomes,
+            Set<StorageOutcome> outcomes) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.gameOutcomes = gameOutcomes;
+        this.outcomes = outcomes;
+    }
+
+    public Lot fromStorageModel(){
+        return new Lot (
+                this.getId(),
+                this.getName(),
+                this.getDescription(),
+                this.getOutcomes().stream()
+                        .map(StorageOutcome::fromStorageModel)
+                        .collect(Collectors.toSet()),
+                this.getGameOutcomes().stream()
+                        .map(StorageGameOutcome::fromStorageModel)
+                        .collect(Collectors.toSet()));
+    }
 
 
     public Long getId() {

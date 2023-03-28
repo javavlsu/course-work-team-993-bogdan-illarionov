@@ -1,6 +1,7 @@
 package com.company.models;
 
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Игровой исход.
@@ -10,13 +11,20 @@ public final class Outcome {
     private final String _value;
     private final double _coefficient;
 
+    private final Set<GameOutcome> _relatedGameOutcomes;
+
     /**
      * Создает новый объект типа {@link Outcome}.
      * @param id Идентификатор исхода.
      * @param value Значение исхода.
      * @param coefficient Коэффицент исхода.
+     * @param gameOutcomes Связанные исходы игрового атвомата.
      */
-    public Outcome(long id, String value, double coefficient) throws IllegalArgumentException {
+    public Outcome(
+            long id,
+            String value,
+            double coefficient,
+            Set<GameOutcome> gameOutcomes) throws IllegalArgumentException {
         _id = id;
 
         if (value.isBlank())
@@ -26,6 +34,10 @@ public final class Outcome {
         if (coefficient <= 1.0)
             throw new IllegalArgumentException("Coefficient can't be equals or less then 1.0");
         _coefficient = coefficient;
+
+        if (gameOutcomes == null || gameOutcomes.isEmpty())
+            throw new IllegalArgumentException("Game outcomes can't be empty");
+        _relatedGameOutcomes = gameOutcomes;
     }
 
     /**
@@ -50,6 +62,14 @@ public final class Outcome {
      */
     public double getCoefficient(){
         return _coefficient;
+    }
+
+    /**
+     * Возвращает связанные исходы игрового автомата.
+     * @return Объект типа {@link Iterable}.
+     */
+    public Iterable<GameOutcome> getRelatedGameOutcomes() {
+        return _relatedGameOutcomes;
     }
 
     @Override

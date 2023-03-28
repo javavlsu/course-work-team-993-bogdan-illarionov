@@ -4,8 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LotRepositoryService {
-
+public class GameOutcomesRepository {
     @Autowired
-    public ILotRepository lotRepository;
+    public IGameOutcomesRepository IGameOutcomesRepository;
 }
