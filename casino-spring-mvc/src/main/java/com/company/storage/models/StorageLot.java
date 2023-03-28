@@ -3,8 +3,6 @@ package com.company.storage.models;
 import jakarta.persistence.*;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -20,7 +18,10 @@ public class StorageLot {
     private String description;
 
     @OneToMany(mappedBy = "lot", fetch = FetchType.EAGER)
-    private Collection<GameOutcome> gameOutcomes;
+    private Set<StorageGameOutcome> gameOutcomes;
+
+    @OneToMany(mappedBy = "lot", fetch = FetchType.EAGER)
+    private Set<StorageOutcome> outcomes;
 
 
     public Long getId() {
@@ -44,10 +45,18 @@ public class StorageLot {
         this.description = description;
     }
 
-    public Collection<GameOutcome> getGameOutcomes() {
+    public Set<StorageGameOutcome> getGameOutcomes() {
         return gameOutcomes;
     }
-    public void setGameOutcomes(Collection<GameOutcome> gameOutcomes) {
-        this.gameOutcomes = gameOutcomes;
+    public void setGameOutcomes(Set<StorageGameOutcome> storageGameOutcomes) {
+        this.gameOutcomes = storageGameOutcomes;
+    }
+
+    public Set<StorageOutcome> getOutcomes() {
+        return outcomes;
+    }
+
+    public void setOutcomes(Set<StorageOutcome> outcomes) {
+        this.outcomes = outcomes;
     }
 }
