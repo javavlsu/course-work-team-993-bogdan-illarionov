@@ -1,42 +1,45 @@
 package com.company.storage.models;
 
-
+import com.company.models.GameOutcome;
+import com.company.models.Outcome;
 import jakarta.persistence.*;
+
+import java.util.Set;
 
 @Entity
 @Table(name = "game_outcomes")
-public class GameOutcome {
+public class StorageGameOutcome {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "view")
     private String view;
+
     @ManyToOne
     @JoinColumn(name="lot_id")
     private StorageLot lot;
 
-    public StorageLot getLot() {
-        return lot;
+    public StorageGameOutcome(){
+
     }
 
-    public GameOutcome(Long id, String view, StorageLot lot) {
+    public StorageGameOutcome(Long id, String view, StorageLot lot) {
         this.id = id;
         this.view = view;
         this.lot = lot;
     }
 
-    public void setLot(StorageLot lot) {
-        this.lot = lot;
-    }
-
-    public GameOutcome(){
-
+    public static GameOutcome fromStorageModel(StorageGameOutcome storageGameOutcome){
+        return new GameOutcome(
+                storageGameOutcome.getId(),
+                storageGameOutcome.getView(),
+                storageGameOutcome.getLot().getId());
     }
 
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -44,8 +47,14 @@ public class GameOutcome {
     public String getView() {
         return view;
     }
-
     public void setView(String view) {
         this.view = view;
+    }
+
+    public StorageLot getLot() {
+        return lot;
+    }
+    public void setLot(StorageLot lot) {
+        this.lot = lot;
     }
 }

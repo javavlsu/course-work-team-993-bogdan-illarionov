@@ -1,5 +1,6 @@
 package com.company;
 
+import com.company.abstractions.IBetObserver;
 import com.company.models.Bet;
 
 public class BetObserver implements IBetObserver {

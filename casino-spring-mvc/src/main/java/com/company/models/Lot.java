@@ -1,17 +1,16 @@
 package com.company.models;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Игровой лот.
  */
 public final class Lot {
-    private final long _id;
+    private final Long _id;
     private final String _name;
     private final String _description;
-    private final List<Outcome> _outcomes;
+    private final Set<Outcome> _outcomes;
+    private final Set<GameOutcome> _gameOutcomes;
 
     /**
      * Создает новый объект типа {@link Lot}.
@@ -21,10 +20,11 @@ public final class Lot {
      * @param outcomes Исходы лота.
      */
     public Lot(
-        long id,
+        Long id,
         String name,
         String description,
-        List<Outcome> outcomes) throws IllegalArgumentException {
+        Set<Outcome> outcomes,
+        Set<GameOutcome> gameOutcomes) throws IllegalArgumentException {
         _id = id;
 
         if (name.isBlank())
@@ -38,13 +38,17 @@ public final class Lot {
         if (outcomes == null || outcomes.isEmpty())
             throw new IllegalArgumentException("Outcomes can't be empty");
         _outcomes = outcomes;
+
+        if (gameOutcomes == null || gameOutcomes.isEmpty())
+            throw new IllegalArgumentException("Game outcomes can't be empty");
+        _gameOutcomes = gameOutcomes;
     }
 
     /**
      * Возвращает идентификатор игрового лота.
      * @return Объект типа {@link long}.
      */
-    public long getId(){
+    public Long getId(){
         return _id;
     }
 
@@ -70,5 +74,13 @@ public final class Lot {
      */
     public Iterable<Outcome> getOutcomes(){
         return _outcomes;
+    }
+
+    /**
+     * Возвращает исходы игрового автомата.
+     * @return Объект типа {@link Iterable}.
+     */
+    public Iterable<GameOutcome> getGameOutcomes(){
+        return _gameOutcomes;
     }
 }

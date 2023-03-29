@@ -1,4 +1,4 @@
-package com.company;
+package com.company.abstractions;
 
 import com.company.models.Bet;
 import com.company.models.Lot;
