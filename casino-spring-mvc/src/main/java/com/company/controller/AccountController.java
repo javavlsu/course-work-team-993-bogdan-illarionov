@@ -1,26 +1,33 @@
-package com.company;
+package com.company.controller;
 
 import com.company.models.account.Password;
 import com.company.models.account.User;
 import com.company.storage.IUserRepository;
+import com.company.storage.LotRepositoryService;
+import com.company.storage.UserRepositoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
 
 @Controller
+@RequestMapping("/account")
 public class AccountController {
 
     @Autowired
-    private IUserRepository userRepository;
+    private UserRepositoryService userRep;
+
+    /*@Autowired
+    private IUserRepository userRepository;*/
 
     @GetMapping("/test")
     public String getUsers(Model model)
     {
-        User user  = userRepository.getById(1);;
+        /*User user  = userRepository.getById(1);;
 
        var canLoginUser = new User(-1,user.getLogin(),user.getPassword(), user.getEmail());
        var cannotLogin = new User(-1,user.getLogin()+"none",user.getPassword(), user.getEmail());
@@ -30,50 +37,22 @@ public class AccountController {
 
         userRepository.changeCredentials(user, user.getLogin(), user.getPassword().getValue(), "!"+LocalDateTime.now().toString());
 
-        String login = user.getLogin();
+        String login = user.getLogin();*/
 
         return "/account/login";
     }
 
-    @GetMapping("/user/login")
-    public String getLogIn(@RequestParam(name = "login") String login, @RequestParam(name = "pwd") String password, Model model)
-    {
-        var user = new User(-1,login, new Password(password),"");
-
-        if (userRepository.isCanLogIn(user))
-        {
-            return "/account/login";
-        }
-        else
-        {
-            return "/account/nologin";
-        }
-    }
-
-    @GetMapping("/user/change")
-    public String getChange(@RequestParam(name = "login") String login, @RequestParam(name = "pwd") String password, @RequestParam(name="new") String newPwd, Model model)
-    {
-        var user = new User(-1,login, new Password(password),"");
-
-        if (!userRepository.isCanLogIn(user))
-        {
-            return "/account/nologin";
-        }
-
-        userRepository.changeCredentials(user, login, newPwd, user.getEmail());
-
-        return "/account/profile";
-    }
-
-    @GetMapping("/account/login")
+    @GetMapping("/login")
     public String getLogin(Model model) {
+
+            var users = userRep.lotRepository.findAll();
 
             System.out.println(345);
 
             return "/account/login";
     }
 
-    @GetMapping("/account/register")
+    @GetMapping("/register")
     public String getRegister(Model model) {
 
         System.out.println(345);
@@ -81,17 +60,7 @@ public class AccountController {
         return "/account/register";
     }
 
-    @GetMapping("/account/tmplogin")
-    public String getTmpLogin(Model model) {
-
-        System.out.println(345);
-
-        model.addAttribute("isLogin", true);
-
-        return "/index";
-    }
-
-    @GetMapping("/account/profile")
+    @GetMapping("/profile/index")
     public String getProfile(Model model) {
 
         System.out.println(345);
@@ -99,7 +68,7 @@ public class AccountController {
         return "/account/profile";
     }
 
-    @GetMapping("/account/balance")
+    @GetMapping("/balance")
     public String getBalance(Model model) {
 
         System.out.println(345);

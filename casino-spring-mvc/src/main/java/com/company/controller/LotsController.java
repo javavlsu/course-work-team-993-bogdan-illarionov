@@ -1,5 +1,4 @@
-/*
-package com.company;
+package com.company.controller;
 
 import com.company.storage.GameOutcomesRepo;
 import com.company.storage.GameOutcomesRepoService;
@@ -53,8 +52,7 @@ public class LotsController {
         if(bindingResult.hasErrors())
             return "/lots"; //Todo
 
-        /*
-        var bet = new Bet(
+        /*var bet = new Bet(
             betViewModel.userId,
             betViewModel.outcomeId,
             betViewModel.price);
@@ -65,12 +63,11 @@ public class LotsController {
         var result = _lotsPlayer.playLot(lot, bet);
 
         model.addAttribute("lot", lot);
-        model.addAttribute("result", result);
+        model.addAttribute("result", result);*/
 
-         */
+
         return "/lots/a";
     }
 
 
 }
-*/

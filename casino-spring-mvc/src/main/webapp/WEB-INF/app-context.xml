@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:sec="http://www.springframework.org/schema/security"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xsi:schemaLocation="
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security.xsd
         http://www.springframework.org/schema/beans
         https://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
@@ -20,10 +23,10 @@
         <bean id="betRepository" class="com.company.storage.BetRepository" scope="singleton">
         </bean>
 
-        <bean id="lotsPlayer" class="com.company.LotsPlayer" scope="singleton">
+        <bean id="lotsPlayer" class="com.company.service.LotsPlayer" scope="singleton">
         </bean>
 
-        <bean id="lotsController" class="com.company.LotsController" scope="request">
+        <bean id="lotsController" class="com.company.controller.LotsController" scope="request">
             <constructor-arg ref="lotRepository"/>
             <constructor-arg ref="betRepository"/>
             <constructor-arg ref="lotsPlayer"/>
@@ -41,4 +44,23 @@
         </bean>-->
     <!-- ... -->
 
+    <!--<sec:http auto-config="true" >
+        &lt;!&ndash;use-expressions="true"&ndash;&gt;
+        &lt;!&ndash;<sec:form-login login-page="/login"
+                        login-processing-url="/authenticateUser" default-target-url="/welcome"
+                        authentication-failure-url="/login" username-parameter="username"
+                        password-parameter="password" />&ndash;&gt;
+
+        &lt;!&ndash;<sec:access-denied-handler error-page="/403.jsp" />&ndash;&gt;
+
+        &lt;!&ndash;<sec:http-basic>
+            <sec:session-management invalid-session-url="/login" />
+        </sec:http-basic>&ndash;&gt;
+
+        <sec:intercept-url pattern="/login" access="permitAll" />
+
+        <sec:intercept-url pattern="/**" access="hasAuthority('AUTH_USER')" />
+
+        &lt;!&ndash;<sec:logout delete-cookies="JSESSIONID" logout-url="/logout" />&ndash;&gt;
+    </sec:http>-->
 </beans>

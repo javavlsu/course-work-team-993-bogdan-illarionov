@@ -1,4 +1,4 @@
-package com.company;
+package com.company.service;
 
 import com.company.models.Bet;
 import com.company.models.Lot;
