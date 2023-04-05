@@ -5,12 +5,12 @@ import com.company.models.account.User;
 import com.company.storage.IUserRepository;
 import com.company.storage.LotRepositoryService;
 import com.company.storage.UserRepositoryService;
+import com.company.viewModels.LoginViewModel;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
@@ -45,11 +45,29 @@ public class AccountController {
     @GetMapping("/login")
     public String getLogin(Model model) {
 
-            var users = userRep.lotRepository.findAll();
+            var viewModel = new LoginViewModel();
 
-            System.out.println(345);
+            viewModel.setUsername("default");
+            viewModel.setPassword("password");
+
+            model.addAttribute("loginModel", viewModel);
 
             return "/account/login";
+    }
+
+    @PostMapping("/login")
+    public String postLogin(@ModelAttribute LoginViewModel viewModel, Model model) {
+
+        if (viewModel == null)
+        {
+            throw new IllegalArgumentException("Null not allowed");
+        }
+
+        var user = userRep.LoginUser(viewModel);
+
+        int b = 2 + 3;
+
+        return "/index";
     }
 
     @GetMapping("/register")

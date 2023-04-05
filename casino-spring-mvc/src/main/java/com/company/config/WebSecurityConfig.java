@@ -104,8 +104,8 @@ return httpSecurity.authorizeHttpRequests()
     @Bean
     public UserDetailsService userDetailsService(IUserRepository userRepository) {
         return username -> {
-            var user = userRepository.findAll().stream().filter(x -> x.getUsername().equals(username)).findFirst().get();
-            if (user != null) return user;
+            var user = userRepository.findAll().stream().filter(x -> x.getUsername().equals(username)).findFirst();
+            if (!user.isEmpty()) return user.get();
             throw new UsernameNotFoundException("User " + username + " not found!");
         };
     }
@@ -117,14 +117,14 @@ return httpSecurity.authorizeHttpRequests()
                 /*.requestMatchers("/account/lk/admin/").hasRole("Admin")
                 .requestMatchers("/account/lk/moderator/").hasRole("Moderator")*/
                 .requestMatchers("/account/profile/index").authenticated()
-                .requestMatchers("/", "/**", "/js/**", "/css/**").permitAll()
+                .anyRequest().permitAll()
 
                 /*.requestMatchers("/account/login").permitAll()
                 .anyRequest().authenticated()*/
                 .and()
                 .formLogin()
                 .loginPage("/account/login")
-                .defaultSuccessUrl("/account/index")
+                .defaultSuccessUrl("/index")
                 .and()
                 .build();
     }
