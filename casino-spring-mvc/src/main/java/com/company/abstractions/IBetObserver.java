@@ -1,4 +1,4 @@
-package com.company.service;
+package com.company.abstractions;
 
 import com.company.models.Bet;
 

@@ -1,37 +1,32 @@
 package com.company.controller;
 
-import com.company.storage.GameOutcomesRepo;
-import com.company.storage.GameOutcomesRepoService;
-import com.company.storage.ILotRepository;
-import com.company.storage.LotRepositoryService;
+import com.company.abstractions.IRepository;
+import com.company.storage.models.StorageLot;
 import com.company.viewModels.BetViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 @Controller
 @RequestMapping
 public class LotsController {
-    //@Autowired
-   // private LotRepositoryService lotRepositoryService;
-
     @Autowired
-    private LotRepositoryService gameOutcomesRepo;
+    private IRepository<StorageLot,Long> lotsRepo;
 
     @GetMapping("/lots")
     public String getLots(Model model) {
-        //var lots = lotRepository.findAll();
-
         //model.addAttribute("lots", lotRepository.findAll();
 
-        var outcomes = gameOutcomesRepo.lotRepository.findAll();
+        var lot = StreamSupport.stream(lotsRepo.getAll().spliterator(), false)
+                .collect(Collectors.toSet())
+                .stream().findFirst().get();
 
-        var a = outcomes.stream().findFirst().get();
-
-        var b = a.getGameOutcomes();
+        var a = lot.getOutcomes();
 
         return "/lots";
     }
