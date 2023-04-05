@@ -1,17 +1,16 @@
-package com.company.storage;
+package com.company.storage.jpa;
 
-import com.company.storage.models.StorageLot;
-import com.company.storage.models.User;
+import com.company.storage.models.StorageUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-@Transactional(isolation = Isolation.READ_COMMITTED)
-public interface IUserRepository extends JpaRepository<User, Long> {
+public interface IUserRepository extends JpaRepository<StorageUser, Long> {
+
+    @Query("SELECT u FROM StorageUser u WHERE u.login = :name")
+    public StorageUser findByUserLogin(@Param("name") String login);
 
 /*    @Query("SELECT u FROM User u WHERE u.email = :email")
     User findUserByEmail(@Param("email") String email);

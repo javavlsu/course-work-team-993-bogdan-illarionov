@@ -1,7 +1,7 @@
 package com.company.storage;
 
 import com.company.abstractions.IRepository;
-import com.company.storage.models.StorageGameOutcome;
+import com.company.storage.jpa.IOutcomesRepository;
 import com.company.storage.models.StorageOutcome;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

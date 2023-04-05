@@ -2,7 +2,7 @@ package com.company.controller;
 
 import com.company.abstractions.IRepository;
 import com.company.storage.models.StorageLot;
-import com.company.viewModels.BetViewModel;
+import com.company.models.view.BetViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -1,18 +1,12 @@
 package com.company.controller;
 
-import com.company.models.account.Password;
-import com.company.models.account.User;
-import com.company.storage.IUserRepository;
-import com.company.storage.LotRepositoryService;
 import com.company.storage.UserRepositoryService;
-import com.company.viewModels.LoginViewModel;
-import jakarta.validation.Valid;
+import com.company.models.view.LoginViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
 
 @Controller
 @RequestMapping("/account")
@@ -79,9 +73,13 @@ public class AccountController {
     }
 
     @GetMapping("/profile/index")
-    public String getProfile(Model model) {
+    public String getProfile(Authentication authentication, Model model) {
 
         System.out.println(345);
+
+        int b = 2 + 3;
+
+        var name = authentication.getName();
 
         return "/account/profile";
     }

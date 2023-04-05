@@ -1,4 +1,4 @@
-package com.company.models;
+package com.company.models.casino;
 
 public final class PlayingResult { //todo
     public boolean isWin;

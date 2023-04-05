@@ -1,38 +1,41 @@
-package com.company.storage.models;
+package com.company.models;
 
-import jakarta.persistence.*;
-import lombok.Data;
+import com.company.storage.models.StorageUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
-@Entity
-@Table(name = "users")
-@Data
-public class User implements UserDetails {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class CasinoUsersDetails implements UserDetails {
 
-    @Column(name = "login")
-    private String login;
-    @Column(name = "password")
-    private String password;
+    private StorageUser user;
 
-    @Column(name = "email")
-    private String email;
+    public CasinoUsersDetails(StorageUser user) {
+        this.user = user;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return  null;/*Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));*/
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
+        for (var role : user.getRoles()) {
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
+        }
+
+        return authorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return getLogin();
+        return user.getLogin();
     }
 
     @Override

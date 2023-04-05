@@ -1,4 +1,4 @@
-package com.company.viewModels;
+package com.company.models.view;
 
 public class RegistrationViewmodel {
 }

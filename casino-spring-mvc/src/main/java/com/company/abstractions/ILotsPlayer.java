@@ -1,8 +1,8 @@
 package com.company.abstractions;
 
-import com.company.models.Bet;
-import com.company.models.Lot;
-import com.company.models.PlayingResult;
+import com.company.models.casino.Bet;
+import com.company.models.casino.Lot;
+import com.company.models.casino.PlayingResult;
 
 /**
  * Проигрыватель игровых лотов.

@@ -1,6 +1,7 @@
 package com.company.storage;
 
 import com.company.abstractions.IRepository;
+import com.company.storage.jpa.ILotRepository;
 import com.company.storage.models.StorageLot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

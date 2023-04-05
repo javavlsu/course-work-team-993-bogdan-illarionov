@@ -1,6 +1,6 @@
 package com.company.storage.models;
 
-import com.company.models.Outcome;
+import com.company.models.casino.Outcome;
 import jakarta.persistence.*;
 
 import java.util.Set;
