@@ -1,5 +1,7 @@
 package com.company.storage.models;
 
+import com.company.models.account.Role;
+import com.company.models.account.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,7 +30,15 @@ public class StorageUser {
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<StorageRole> roles;
+    private Set<Role> roles;
+
+    public static User toModel(StorageUser storageUser) {
+        if (storageUser == null) {
+            return null;
+        }
+
+        return new User(storageUser.login, storageUser.password, storageUser.email, storageUser.roles);
+    }
 
     public StorageUser() {
 

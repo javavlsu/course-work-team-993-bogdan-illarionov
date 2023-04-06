@@ -1,32 +1,76 @@
 package com.company.models.account;
 
-public class User {
-    public long key;
-    private String login;
-    private String email;
-    private Password password;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-    public User(long key, String login, Password password,String email)
-    {
-        this.key = key;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
+public class User implements UserDetails {
+
+    @Getter
+    private final String login;
+
+    @Setter
+    private String password;
+
+    @Getter
+    @Setter
+    private String email;
+
+    @Getter
+    private final Set<Role> roles;
+
+    public User(String login, String password, String email, Set<Role> roles) {
         this.login = login;
         this.password = password;
         this.email = email;
+        this.roles = roles;
     }
 
-    public long getKey() {
-        return key;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
+        for (var role : roles) {
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
+        }
+
+        return authorities;
     }
 
-    public String getLogin() {
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
         return login;
     }
 
-    public String getEmail() {
-        return email;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    public Password getPassword() {
-        return password;
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return roles.stream().anyMatch(x -> x.getName().equals("Enabled"));
     }
 }

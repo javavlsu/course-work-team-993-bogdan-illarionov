@@ -1,8 +1,11 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%> 
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
 
 <spring:url value="/lots" var="lotsLink" />
 <spring:url value="/index" var="homeLink" />
+<spring:url value="/account/manage" var="manageUsersLink" />
 
 <header>
   <nav
@@ -37,6 +40,11 @@
           <li class="nav-item">
             <a class="nav-link text-dark" href="${lotsLink}">Lots</a>
           </li>
+          <sec:authorize access="hasAnyAuthority('Admin')">
+            <li class="nav-item">
+              <a class="nav-link text-dark" href="${manageUsersLink}">Manage Users</a>
+            </li>
+          </sec:authorize>
         </ul>
         <jsp:include page="_login.jsp" />
       </div>

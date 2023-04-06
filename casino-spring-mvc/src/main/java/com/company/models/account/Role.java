@@ -1,4 +1,4 @@
-package com.company.storage.models;
+package com.company.models.account;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 @Table(name = "roles")
 @AllArgsConstructor
-public class StorageRole {
+public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Short id;
@@ -16,7 +16,7 @@ public class StorageRole {
     @Column(name = "name")
     private String name;
 
-    public StorageRole() {
+    public Role() {
 
     }
 }

@@ -6,7 +6,7 @@
 
 <html>
   <head>
-    <title>Home</title>
+    <title>Login</title>
     <jsp:include page="../shared/_head.jsp" />
     <spring:url value="/account/register" var="registerLink" />
   </head>
@@ -18,18 +18,23 @@
 
         </div>
         <div class="col-md-5">
-          <h1>Register!</h1>
+          <h1>Login!</h1>
+          <!-- <br/> -->
+          <div class="row">
+            <label for="loginString">Login</label>
+            <form:input class="form-control" type="text" id="loginString" path="username"/>
+          </div>
           <br/>
-          <label for="loginString">Login</label>
-          <form:input class="form-control" type="text" id="loginString" path="username"/>
-          <label for="psdString">Password</label>
-          <form:input class="form-control" type="text" id="psdString" path="password"/>
+          <div class="row">
+            <label for="psdString">Password</label>
+            <form:input class="form-control" type="text" id="psdString" path="password"/>
+          </div>
           <br/>
-          <!-- onclick="location.href='/basket/add?itemId=@Model.Item.Key.Value&&providerId=@Model.Provider.Key.Value'" -->
-          <button class="btn btn-primary" type="button" onclick="location.href='/casino-spring-mvc/account/tmplogin'">
-            Register
-          </button>
-          <p><form:button type="submit" class="btn">Save</form:button></p>
+          <div class="row">
+            <form:button type="submit" class="btn btn-primary">LogIn</form:button>
+          </div>
+          <!-- <br/> -->
+          <!-- <p></p> -->
         </div>
         <div class="col-md-4">
         </div>

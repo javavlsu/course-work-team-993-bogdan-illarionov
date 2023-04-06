@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
@@ -27,7 +26,8 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests()
                 /*.requestMatchers("/account/lk/admin/").hasRole("Admin")
                 .requestMatchers("/account/lk/moderator/").hasRole("Moderator")*/
-                .requestMatchers("/account/profile/index").hasAnyAuthority("Player")
+                .requestMatchers("/account/profile/index").authenticated()
+                .requestMatchers("/account/manage").hasAnyAuthority("Admin")
                 .anyRequest().permitAll()
 
                 /*.requestMatchers("/account/login").permitAll()
@@ -36,6 +36,14 @@ public class WebSecurityConfig {
                 .formLogin()
                 .loginPage("/account/login")
                 .defaultSuccessUrl("/index")
+
+                .and() // Logout config
+                .logout()
+                .logoutUrl("/account/logout")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .logoutSuccessUrl("/account/login")
+
                 .and()
                 .build();
     }
