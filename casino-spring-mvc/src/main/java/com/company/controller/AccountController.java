@@ -5,7 +5,7 @@ import com.company.models.account.User;
 import com.company.models.view.LoginViewModel;
 import com.company.models.view.ProfileViewModel;
 import com.company.models.view.RegisterViewModel;
-import com.company.service.UsersService;
+import com.company.logic.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
