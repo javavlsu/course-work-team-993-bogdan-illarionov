@@ -4,24 +4,20 @@ package com.company.models.casino;
  * Игровая ставка.
  */
 public final class Bet {
-    private final long _userId;
-    private final long _outcomeId;
-    private final double _price;
+    private final BetId _id;
+    private final Double _price;
     private BetStatus _status = BetStatus.Unknown;
 
     /**
      * Создает новый объек типа {@link Bet}.
-     * @param userId Идентификатор пользователя, сделавший ставку.
-     * @param outcomeId Идентификатор исхода, на который сделана ставка.
+     * @param betId Идентификатор ставки.
      * @param price Цена пари.
      */
     public Bet(
-        long userId,
-        long outcomeId,
-        double price) throws IllegalArgumentException {
+        BetId betId,
+        Double price) throws IllegalArgumentException {
 
-        _userId = userId;
-        _outcomeId = outcomeId;
+        _id = betId;
 
         if (price <= 1.0)
             throw new IllegalArgumentException("Price can't be equal or less then 1.0");
@@ -30,16 +26,10 @@ public final class Bet {
     }
 
     /**
-     * Возвращает идентификатор пользователя, сделавшего ставку.
+     * Возвращает идентификатор ставки.
      */
-    public long getUserId(){
-        return _userId;
-    }
-    /**
-     * Возвращает идентификатор исхода, на который была сделана ставка.
-     */
-    public long getOutcomeId(){
-        return _outcomeId;
+    public BetId getId() {
+        return _id;
     }
 
     /**
