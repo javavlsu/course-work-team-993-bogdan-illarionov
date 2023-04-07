@@ -1,10 +1,7 @@
 package com.company.storage.models;
 
-import com.company.models.GameOutcome;
-import com.company.models.Outcome;
+import com.company.models.casino.GameOutcome;
 import jakarta.persistence.*;
-
-import java.util.Set;
 
 @Entity
 @Table(name = "game_outcomes")

@@ -4,7 +4,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <html>
   <head>
-    <title>Home</title>
+    <title>Balance</title>
     <jsp:include page="../shared/_head.jsp" />
   </head>
   <body>

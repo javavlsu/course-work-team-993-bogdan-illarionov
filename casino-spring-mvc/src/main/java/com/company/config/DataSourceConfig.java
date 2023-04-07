@@ -1,4 +1,4 @@
-package com.company;
+package com.company.config;
 
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +14,7 @@ public class DataSourceConfig {
                 .driverClassName("org.postgresql.Driver")
                 .url("jdbc:postgresql://localhost:5432/casino")
                 .username("postgres")
-                .password("admin")
+                .password("root")
                 .build();
     }
 }

@@ -1,10 +1,8 @@
 package com.company.storage.models;
 
-import com.company.models.Lot;
-import com.company.storage.ILotRepository;
+import com.company.models.casino.Lot;
 import jakarta.persistence.*;
 
-import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 

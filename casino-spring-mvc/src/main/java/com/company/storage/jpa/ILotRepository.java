@@ -1,4 +1,4 @@
-package com.company.storage;
+package com.company.storage.jpa;
 
 
 import com.company.storage.models.StorageLot;

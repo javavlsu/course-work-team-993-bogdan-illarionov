@@ -1,4 +1,4 @@
-package com.company.models;
+package com.company.models.casino;
 
 import java.util.Objects;
 import java.util.Set;

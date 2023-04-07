@@ -1,9 +1,9 @@
-package com.company;
+package com.company.service;
 
 import com.company.abstractions.ILotsPlayer;
-import com.company.models.Bet;
-import com.company.models.Lot;
-import com.company.models.PlayingResult;
+import com.company.models.casino.Bet;
+import com.company.models.casino.Lot;
+import com.company.models.casino.PlayingResult;
 
 import java.util.Arrays;
 import java.util.Random;

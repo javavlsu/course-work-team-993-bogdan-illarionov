@@ -1,8 +1,8 @@
-package com.company;
+package com.company.controller;
 
 import com.company.abstractions.IRepository;
 import com.company.storage.models.StorageLot;
-import com.company.viewModels.BetViewModel;
+import com.company.models.view.BetViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -47,8 +47,7 @@ public class LotsController {
         if(bindingResult.hasErrors())
             return "/lots"; //Todo
 
-        /*
-        var bet = new Bet(
+        /*var bet = new Bet(
             betViewModel.userId,
             betViewModel.outcomeId,
             betViewModel.price);
@@ -59,9 +58,9 @@ public class LotsController {
         var result = _lotsPlayer.playLot(lot, bet);
 
         model.addAttribute("lot", lot);
-        model.addAttribute("result", result);
+        model.addAttribute("result", result);*/
 
-         */
+
         return "/lots/a";
     }
 
