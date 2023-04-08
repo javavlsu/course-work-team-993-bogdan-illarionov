@@ -7,6 +7,15 @@ public final class PlayingResult implements IReadOnlyPlayingResult {
     private double winPrice;
     private long betId;
 
+    public PlayingResult(boolean isWin, double winPrice, long betId) {
+        this.isWin = isWin;
+        this.winPrice = winPrice;
+        this.betId = betId;
+    }
+
+    public PlayingResult() {
+    }
+
     @Override
     public boolean isWin() {
         return isWin;

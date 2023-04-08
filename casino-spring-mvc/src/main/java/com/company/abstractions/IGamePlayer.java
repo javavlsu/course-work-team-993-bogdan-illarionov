@@ -4,6 +4,7 @@ import com.company.models.casino.GameOutcome;
 import com.company.storage.models.StorageGameOutcome;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Описывает проигрывателя игры.

@@ -4,7 +4,9 @@ package com.company.models.casino;
  * Игровая ставка.
  */
 public final class Bet {
-    private final BetId _id;
+    private Long _id;
+    private Long _userId;
+    private Long _outcomeId;
     private final Double _price;
     private BetStatus _status = BetStatus.Unknown;
 
@@ -14,10 +16,14 @@ public final class Bet {
      * @param price Цена пари.
      */
     public Bet(
-        BetId betId,
+        Long id,
+        Long userId,
+        Long outcomeId,
         Double price) throws IllegalArgumentException {
 
-        _id = betId;
+        _id = id;
+        _userId = userId;
+        _outcomeId = outcomeId;
 
         if (price <= 1.0)
             throw new IllegalArgumentException("Price can't be equal or less then 1.0");
@@ -28,9 +34,31 @@ public final class Bet {
     /**
      * Возвращает идентификатор ставки.
      */
-    public BetId getId() {
+    public Long getId() {
         return _id;
     }
+
+    /**
+     * Возвращает идентификатор пользователя, совершившего ставку.
+     */
+    public Long getUserId() {
+        return _userId;
+    }
+
+    /**
+     * Возвращает идентификатор исхода, на который сделана ставка.
+     */
+    public Long getOutcomeId() {
+        return _outcomeId;
+    }
+
+    /**
+     * Возвращает размер ставки.
+     */
+    public Double getPrice() {
+        return _price;
+    }
+
 
     /**
      * Возвращает статус ставки.
