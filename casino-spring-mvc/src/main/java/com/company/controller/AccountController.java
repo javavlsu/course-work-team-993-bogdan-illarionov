@@ -5,7 +5,7 @@ import com.company.models.account.User;
 import com.company.models.view.LoginViewModel;
 import com.company.models.view.ProfileViewModel;
 import com.company.models.view.RegisterViewModel;
-import com.company.logic.UsersService;
+import com.company.logic.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -19,7 +19,7 @@ import java.util.HashSet;
 public class AccountController {
 
     @Autowired
-    private UsersService usersService;
+    private UserService userService;
 
     @GetMapping("/login")
     public String getLogin(Model model) {
@@ -47,7 +47,7 @@ public class AccountController {
     @PostMapping("/register")
     public String postRegister(@ModelAttribute RegisterViewModel viewModel, Model model) {
 
-        if (!usersService.findByLogin(viewModel.getLogin()).isEmpty()) {
+        if (!userService.findByLogin(viewModel.getLogin()).isEmpty()) {
             return "/account/register";
         }
 
@@ -57,7 +57,7 @@ public class AccountController {
                 viewModel.getEmail(),
                 new HashSet<Role>());
 
-        usersService.RegisterUser(user);
+        userService.RegisterUser(user);
 
         return "/index";
 
@@ -66,7 +66,7 @@ public class AccountController {
     @GetMapping("/manage")
     public String getUsers(Model model) {
 
-        var users = usersService.getUsers();
+        var users = userService.getUsers();
 
         model.addAttribute("users", users);
 
@@ -78,7 +78,7 @@ public class AccountController {
 
         //var roles = usersService.getRoles();
 
-        var user = usersService.findByLogin(name);
+        var user = userService.findByLogin(name);
 
         if (user.isEmpty()) {
             return "/index";
@@ -86,7 +86,7 @@ public class AccountController {
 
         var roles = new HashSet<Role>();
 
-        for (var role : usersService.getRoles()) {
+        for (var role : userService.getRoles()) {
 
             if (user.get().getRoles().stream().anyMatch(x -> x.getName().equals(role.getName()))) {
                 continue;
@@ -105,13 +105,13 @@ public class AccountController {
 
     @GetMapping("/manage/user/add")
     public String getAddRole(@RequestParam String name, @RequestParam Short role, Model model) {
-        var user = usersService.findByLogin(name);
+        var user = userService.findByLogin(name);
 
         if (user.isEmpty()) {
             return "/index";
         }
 
-        var roleToAdd = usersService.getRoles().stream().filter(x -> x.getId() == role).findFirst();
+        var roleToAdd = userService.getRoles().stream().filter(x -> x.getId() == role).findFirst();
 
         if (roleToAdd.isEmpty()) {
             return "/index";
@@ -121,20 +121,20 @@ public class AccountController {
 
         domain.getRoles().add(roleToAdd.get());
 
-        usersService.UpdateUser(domain);
+        userService.UpdateUser(domain);
 
         return "/index";
     }
 
     @GetMapping("/manage/user/remove")
     public String getRemoveRole(@RequestParam String name, @RequestParam Short role, Model model) {
-        var user = usersService.findByLogin(name);
+        var user = userService.findByLogin(name);
 
         if (user.isEmpty()) {
             return "/index";
         }
 
-        var roleToRemove = usersService.getRoles().stream().filter(x -> x.getId() == role).findFirst();
+        var roleToRemove = userService.getRoles().stream().filter(x -> x.getId() == role).findFirst();
 
         if (roleToRemove.isEmpty()) {
             return "/index";
@@ -144,7 +144,7 @@ public class AccountController {
 
         domain.getRoles().remove(roleToRemove.get());
 
-        usersService.UpdateUser(domain);
+        userService.UpdateUser(domain);
 
         return "/index";
     }
@@ -153,7 +153,7 @@ public class AccountController {
     public String getProfile(Authentication authentication, Model model) {
         var name = authentication.getName();
 
-        var user = usersService.findByLogin(name);
+        var user = userService.findByLogin(name);
 
         if (user.isEmpty()) {
             return "/index";
@@ -171,7 +171,7 @@ public class AccountController {
 
     @PostMapping("/profile/index")
     public String postProfile(@ModelAttribute ProfileViewModel viewModel, Model model) {
-        if (usersService.findByLogin(viewModel.getLogin()).isEmpty()) {
+        if (userService.findByLogin(viewModel.getLogin()).isEmpty()) {
             return "/index";
         }
 
@@ -181,7 +181,7 @@ public class AccountController {
                 viewModel.getEmail(),
                 new HashSet<Role>());
 
-        usersService.UpdateUser(user);
+        userService.UpdateUser(user);
 
         return "/index";
 
