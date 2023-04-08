@@ -31,7 +31,7 @@ public class IncreasedChanceGamePlayer implements IGamePlayer {
     }
 
     @Override
-    public StorageGameOutcome playGame(List<StorageGameOutcome> gameOutcomes) { //todo
+    public StorageGameOutcome playGame(List<StorageGameOutcome> gameOutcomes) {
         var playedOutcomes = configureGameOutcomes(gameOutcomes);
 
         return wrappedGamePlayer.playGame(playedOutcomes);
