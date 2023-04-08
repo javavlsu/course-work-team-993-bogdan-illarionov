@@ -77,8 +77,9 @@ public class IncreasedChanceGamePlayer implements IGamePlayer {
         resultOutcomes.addAll(winningGameOutcomes);
 
         var currentCount = winningGameOutcomes.size();
+        var iterator = otherOutcomes.iterator();
         while (currentCount < outcomesCount){
-            resultOutcomes.add(otherOutcomes.iterator().next());
+            resultOutcomes.add(iterator.next());
             currentCount++;
         }
 
