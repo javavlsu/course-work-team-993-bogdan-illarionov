@@ -22,17 +22,17 @@ public class UserRepository implements IRepository<StorageUser, Long> {
     }
 
     @Override
-    public void add(StorageUser storageBet) {
-        userRepository.saveAndFlush(storageBet);
+    public void add(StorageUser storageUser) {
+        userRepository.saveAndFlush(storageUser);
     }
 
     @Override
-    public void remove(StorageUser storageBet) {
-        userRepository.delete(storageBet);
+    public void remove(StorageUser storageUser) {
+        userRepository.delete(storageUser);
     }
 
     @Override
-    public void update(StorageUser storageBet) {
-        userRepository.saveAndFlush(storageBet);
+    public void update(StorageUser storageUser) {
+        userRepository.saveAndFlush(storageUser);
     }
 }
