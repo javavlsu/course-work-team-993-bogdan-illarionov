@@ -1,5 +1,6 @@
 package com.company.controller;
 
+import com.company.abstractions.IBetApplicator;
 import com.company.abstractions.IRepository;
 import com.company.storage.models.StorageLot;
 import com.company.models.view.BetViewModel;
@@ -17,6 +18,8 @@ import java.util.stream.StreamSupport;
 public class LotsController {
     @Autowired
     private IRepository<StorageLot,Long> lotsRepo;
+    @Autowired
+    private IBetApplicator betApplicator;
 
     @GetMapping("/lots")
     public String getLots(Model model) {

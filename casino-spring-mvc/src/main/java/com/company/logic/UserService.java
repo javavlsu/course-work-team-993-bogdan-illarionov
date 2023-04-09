@@ -1,4 +1,4 @@
-package com.company.service;
+package com.company.logic;
 
 import com.company.abstractions.IUserService;
 import com.company.models.account.User;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UsersService implements IUserService {
+public class UserService implements IUserService {
 
     private static final String IS_ENABLE_ROLE_NAME = "Enabled";
     private static final String PLAYER_ROLE_NAME = "Player";

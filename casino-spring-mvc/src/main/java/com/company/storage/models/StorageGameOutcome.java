@@ -3,6 +3,8 @@ package com.company.storage.models;
 import com.company.models.casino.GameOutcome;
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "game_outcomes")
 public class StorageGameOutcome {
@@ -53,5 +55,18 @@ public class StorageGameOutcome {
     }
     public void setLot(StorageLot lot) {
         this.lot = lot;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StorageGameOutcome that = (StorageGameOutcome) o;
+        return Objects.equals(id, that.id) && Objects.equals(view, that.view) && Objects.equals(lot, that.lot);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, view, lot);
     }
 }

@@ -43,4 +43,9 @@ public class StorageUser {
     public StorageUser() {
 
     }
+
+    //todo [0-100%]
+    public Integer getIncreasedChance(){
+        return 0;
+    }
 }

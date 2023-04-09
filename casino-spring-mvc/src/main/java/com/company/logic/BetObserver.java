@@ -1,4 +1,4 @@
-package com.company.service;
+package com.company.logic;
 
 import com.company.abstractions.IBetObserver;
 import com.company.models.casino.Bet;
