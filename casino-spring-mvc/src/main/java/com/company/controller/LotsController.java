@@ -2,6 +2,10 @@ package com.company.controller;
 
 import com.company.abstractions.IBetApplicator;
 import com.company.abstractions.IRepository;
+import com.company.models.account.Role;
+import com.company.models.account.User;
+import com.company.models.casino.Bet;
+import com.company.models.view.RegisterViewModel;
 import com.company.storage.models.StorageLot;
 import com.company.models.view.BetViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +14,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -23,22 +30,40 @@ public class LotsController {
 
     @GetMapping("/lots")
     public String getLots(Model model) {
-        //model.addAttribute("lots", lotRepository.findAll();
 
-        var lot = StreamSupport.stream(lotsRepo.getAll().spliterator(), false)
-                .collect(Collectors.toSet())
-                .stream().findFirst().get();
+        model.addAttribute(
+                "lots",
+                StreamSupport
+                        .stream(lotsRepo.getAll().spliterator(), false)
+                        .collect(Collectors.toSet()));
 
-        var a = lot.getOutcomes();
-
-        return "/lots";
+        return "/gaming/lots";
     }
 
     @GetMapping("lots/{lotId}")
-    public String getLot(@PathVariable long lotId, Model model) {
-        //model.addAttribute("lot", _lotRepository.getById(lotId));
+    public String getLot(@PathVariable Long lotId, Model model) {
 
-        return "/lots/a";
+        var lot = lotsRepo.getById(lotId);
+        Map<Long, String> outcomesMap = new HashMap<Long, String>();
+        for (var outcome:
+             lot.getOutcomes()) {
+            outcomesMap.put(outcome.getId(), outcome.getValue());
+        }
+
+        model.addAttribute("lot", lot);
+        model.addAttribute("outcomesMap", outcomesMap);
+        model.addAttribute("viewModel", new BetViewModel());
+
+        return "/gaming/lot";
+    }
+
+    @PostMapping("lots/{lotId}")
+    public String postLot(@ModelAttribute BetViewModel viewModel, Model model) {
+
+
+
+        return "/index";
+
     }
 
     @PostMapping("lots/play")
