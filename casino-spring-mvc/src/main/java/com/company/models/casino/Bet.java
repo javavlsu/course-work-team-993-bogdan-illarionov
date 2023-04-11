@@ -4,7 +4,6 @@ package com.company.models.casino;
  * Игровая ставка.
  */
 public final class Bet {
-    private Long _id;
     private Long _userId;
     private Long _outcomeId;
     private final Double _price;
@@ -12,16 +11,13 @@ public final class Bet {
 
     /**
      * Создает новый объек типа {@link Bet}.
-     * @param betId Идентификатор ставки.
      * @param price Цена пари.
      */
     public Bet(
-        Long id,
         Long userId,
         Long outcomeId,
         Double price) throws IllegalArgumentException {
 
-        _id = id;
         _userId = userId;
         _outcomeId = outcomeId;
 
@@ -29,13 +25,6 @@ public final class Bet {
             throw new IllegalArgumentException("Price can't be equal or less then 1.0");
 
         _price = price;
-    }
-
-    /**
-     * Возвращает идентификатор ставки.
-     */
-    public Long getId() {
-        return _id;
     }
 
     /**

@@ -19,15 +19,17 @@ public class StorageBet {
     @Column(name = "status")
     private BetStatus betStatus;
 
-    public StorageBet(Long id, StorageUser user, StorageOutcome outcome, Double sum, BetStatus betStatus) {
-        this.id = id;
+    public StorageBet() {
+    }
+    public StorageBet(StorageUser user, StorageOutcome outcome, Double sum, BetStatus betStatus) {
         this.user = user;
         this.outcome = outcome;
         this.sum = sum;
         this.betStatus = betStatus;
     }
-
-    public StorageBet() {
+    public StorageBet(Long id, StorageUser user, StorageOutcome outcome, Double sum, BetStatus betStatus) {
+        this(user, outcome, sum, betStatus);
+        this.id = id;
     }
 
     public Long getId() {

@@ -7,5 +7,6 @@ import lombok.Data;
 public class BetViewModel {
     private Long userId;
     private Long outcomeId;
+    @Min(10)
     private Double betSize;
 }

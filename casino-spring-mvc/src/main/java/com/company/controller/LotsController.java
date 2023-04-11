@@ -58,39 +58,23 @@ public class LotsController {
     }
 
     @PostMapping("lots/{lotId}")
-    public String postLot(@ModelAttribute BetViewModel viewModel, Model model) {
+    public String postLot(
+            @PathVariable Long lotId,
+            @ModelAttribute BetViewModel viewModel,
+            BindingResult bindingResult,
+            Model model) {
 
-
-
-        return "/index";
-
-    }
-
-    @PostMapping("lots/play")
-    public String postLotPlay(
-        @ModelAttribute BetViewModel betViewModel,
-        BindingResult bindingResult,
-        Model model)
-    {
         if(bindingResult.hasErrors())
             return "/lots"; //Todo
 
-        /*var bet = new Bet(
-            betViewModel.userId,
-            betViewModel.outcomeId,
-            betViewModel.price);
+        var bet = new Bet(
+                viewModel.getUserId(),
+                viewModel.getOutcomeId(),
+                viewModel.getBetSize());
 
-        _betRepository.add(bet);
+        betApplicator.applyBet(bet);
 
-        var lot = _lotRepository.getById(betViewModel.lotId);
-        var result = _lotsPlayer.playLot(lot, bet);
-
-        model.addAttribute("lot", lot);
-        model.addAttribute("result", result);*/
-
-
-        return "/lots/a";
+        //todo
+        return "/index";
     }
-
-
 }
