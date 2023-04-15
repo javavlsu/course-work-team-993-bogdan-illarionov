@@ -4,6 +4,7 @@ import com.company.models.casino.BetStatus;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "bets")
 public class StorageBet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

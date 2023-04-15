@@ -2,7 +2,8 @@
 <%@page isELIgnored = "false" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%> 
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%> 
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <html>
   <head>
@@ -33,9 +34,11 @@
           </form:select>
         </div>
         <div class="col-md-4">
-          <div class="row">
+          <sec:authorize access="hasAnyAuthority('Admin')">
+            <div class="row">
               <form:button type="submit" class="btn btn-primary">Bet</form:button>
-          </div>
+            </div>
+          </sec:authorize>
         </div>
         </form:form>
       </div>
