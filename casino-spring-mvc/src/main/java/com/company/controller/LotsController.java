@@ -44,17 +44,7 @@ public class LotsController {
 
     @GetMapping("lots/{lotId}")
     public String getLot(@PathVariable Long lotId, Model model) {
-
-        var lot = lotsRepo.getById(lotId);
-        Map<Long, String> outcomesMap = new HashMap<Long, String>();
-        for (var outcome:
-             lot.getOutcomes()) {
-            outcomesMap.put(outcome.getId(), outcome.getValue());
-        }
-
-        model.addAttribute("lot", lot);
-        model.addAttribute("outcomesMap", outcomesMap);
-        model.addAttribute("viewModel", new BetViewModel());
+        PrepareModelLot(model, lotId);
 
         return "/gaming/lot";
     }
@@ -75,9 +65,24 @@ public class LotsController {
                 viewModel.getOutcomeId(),
                 viewModel.getBetSize());
 
-        betApplicator.applyBet(bet);
+        var result = betApplicator.applyBet(bet);
+        PrepareModelLot(model, lotId);
+        model.addAttribute("gameWin", result.isWin());
+        model.addAttribute("gameResult", result.getGameOutcomeView());
 
-        //todo
-        return "/index";
+        return "/gaming/lot";
+    }
+
+    private void PrepareModelLot(Model model, Long lotId){
+        var lot = lotsRepo.getById(lotId);
+        Map<Long, String> outcomesMap = new HashMap<Long, String>();
+        for (var outcome:
+                lot.getOutcomes()) {
+            outcomesMap.put(outcome.getId(), outcome.getValue());
+        }
+
+        model.addAttribute("lot", lot);
+        model.addAttribute("outcomesMap", outcomesMap);
+        model.addAttribute("viewModel", new BetViewModel());
     }
 }

@@ -20,6 +20,18 @@
           src="https://www.scoopearth.com/wp-content/uploads/2022/04/photo-1592398191627-25b41eeaa398.jpg"
           alt="casino image"
         />
+        <div class="col-md-4">
+            <c:if test="${gameResult != null}">
+                <c:if test="${gameWin == true}">
+                    <h3 align="center"><c:out value="Congratulations!" /></h3>
+                </c:if>
+                <c:if test="${gameWin == false}">
+                    <h3 align="center"><c:out value="Very sorry. Next time you will definitely be lucky!" /></h3>
+                </c:if>
+                <h3 align="center"><c:out value="Game result is: ${gameResult}!" /></h3>
+            </c:if>
+
+        </div>
       </div>
 
       <div class="row form-group">
