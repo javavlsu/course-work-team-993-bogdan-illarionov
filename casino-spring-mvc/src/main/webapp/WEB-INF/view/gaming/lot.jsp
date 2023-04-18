@@ -46,7 +46,7 @@
           </form:select>
         </div>
         <div class="col-md-4">
-          <sec:authorize access="hasAnyAuthority('Admin')">
+          <sec:authorize access="hasAnyAuthority('Player')">
             <div class="row">
               <form:button type="submit" class="btn btn-primary">Bet</form:button>
             </div>
