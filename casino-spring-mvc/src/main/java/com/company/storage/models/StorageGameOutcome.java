@@ -15,7 +15,7 @@ public class StorageGameOutcome {
     @Column(name = "view")
     private String view;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="lot_id")
     private StorageLot lot;
 

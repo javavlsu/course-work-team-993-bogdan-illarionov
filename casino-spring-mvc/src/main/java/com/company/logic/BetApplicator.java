@@ -7,19 +7,22 @@ import com.company.abstractions.IRepository;
 import com.company.models.casino.Bet;
 import com.company.models.casino.BetStatus;
 import com.company.models.casino.PlayingResult;
+import com.company.storage.jpa.IUserRepository;
 import com.company.storage.models.StorageBet;
 import com.company.storage.models.StorageGameOutcome;
 import com.company.storage.models.StorageOutcome;
 import com.company.storage.models.StorageUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class BetApplicator implements IBetApplicator {
     @Autowired
     private IRepository<StorageBet, Long> betRepository;
     @Autowired
-    private IRepository<StorageUser, Long> userRepository;
+    private IUserRepository userRepository;
     @Autowired
     private IRepository<StorageOutcome, Long> outcomeRepository;
     @Autowired
@@ -27,21 +30,21 @@ public class BetApplicator implements IBetApplicator {
 
     @Override
     public IReadOnlyPlayingResult applyBet(Bet bet) {
-        var user = userRepository.getById(bet.getUserId());
+        var user = userRepository.findByUserLogin(bet.getUserLogin());
         var outcome = outcomeRepository.getById(bet.getOutcomeId());
 
         var storageBet = new StorageBet(
-                bet.getId(),
                 user,
                 outcome,
                 bet.getPrice(),
                 bet.getStatus());
 
-        betRepository.add(new StorageBet());
+        betRepository.add(storageBet);
 
         return getPlayingResult(storageBet);
     }
 
+    @Transactional(readOnly = true)
     private PlayingResult getPlayingResult(StorageBet bet){
         var resultGameOutcome = getResultGame(bet);
 
@@ -53,9 +56,14 @@ public class BetApplicator implements IBetApplicator {
                 : BetStatus.Loss);
         betRepository.update(bet);
 
-        return new PlayingResult(isWin, outcome.getKoef(), bet.getId());
+        return new PlayingResult(
+                isWin,
+                outcome.getKoef(),
+                bet.getId(),
+                resultGameOutcome.getView());
     }
 
+    @Transactional
     private StorageGameOutcome getResultGame(StorageBet bet){
         var player = gamePlayerFactory.createGamePlayer(bet.getUser(), bet.getOutcome());
 
@@ -65,6 +73,7 @@ public class BetApplicator implements IBetApplicator {
                 .toList());
     }
 
+    @Transactional
     private boolean betIsWin(StorageOutcome outcome, StorageGameOutcome result){
         return outcome.getRelatedGameOutcomes().contains(result);
     }

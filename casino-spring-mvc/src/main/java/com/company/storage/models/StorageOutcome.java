@@ -19,11 +19,11 @@ public class StorageOutcome {
     @Column(name = "koef")
     private Double koef;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="lot_id")
     private StorageLot lot;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "outcomes_game_outcomes",
             joinColumns = @JoinColumn(name = "outcome_id"),

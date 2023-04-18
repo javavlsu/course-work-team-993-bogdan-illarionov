@@ -7,10 +7,17 @@ public final class PlayingResult implements IReadOnlyPlayingResult {
     private double winPrice;
     private long betId;
 
-    public PlayingResult(boolean isWin, double winPrice, long betId) {
+    private String gameOutcomeView;
+
+    public PlayingResult(
+            boolean isWin,
+            double winPrice,
+            long betId,
+            String gameOutcomeViewiew) {
         this.isWin = isWin;
         this.winPrice = winPrice;
         this.betId = betId;
+        this.gameOutcomeView = gameOutcomeViewiew;
     }
 
     public PlayingResult() {
@@ -19,6 +26,11 @@ public final class PlayingResult implements IReadOnlyPlayingResult {
     @Override
     public boolean isWin() {
         return isWin;
+    }
+
+    @Override
+    public String getGameOutcomeView() {
+        return gameOutcomeView;
     }
 
     @Override

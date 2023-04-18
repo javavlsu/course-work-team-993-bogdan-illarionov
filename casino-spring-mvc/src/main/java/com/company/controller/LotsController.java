@@ -2,14 +2,23 @@ package com.company.controller;
 
 import com.company.abstractions.IBetApplicator;
 import com.company.abstractions.IRepository;
+import com.company.models.account.Role;
+import com.company.models.account.User;
+import com.company.models.casino.Bet;
+import com.company.models.view.RegisterViewModel;
 import com.company.storage.models.StorageLot;
 import com.company.models.view.BetViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -23,49 +32,57 @@ public class LotsController {
 
     @GetMapping("/lots")
     public String getLots(Model model) {
-        //model.addAttribute("lots", lotRepository.findAll();
 
-        var lot = StreamSupport.stream(lotsRepo.getAll().spliterator(), false)
-                .collect(Collectors.toSet())
-                .stream().findFirst().get();
+        model.addAttribute(
+                "lots",
+                StreamSupport
+                        .stream(lotsRepo.getAll().spliterator(), false)
+                        .collect(Collectors.toSet()));
 
-        var a = lot.getOutcomes();
-
-        return "/lots";
+        return "/gaming/lots";
     }
 
     @GetMapping("lots/{lotId}")
-    public String getLot(@PathVariable long lotId, Model model) {
-        //model.addAttribute("lot", _lotRepository.getById(lotId));
+    public String getLot(@PathVariable Long lotId, Model model) {
+        PrepareModelLot(model, lotId);
 
-        return "/lots/a";
+        return "/gaming/lot";
     }
 
-    @PostMapping("lots/play")
-    public String postLotPlay(
-        @ModelAttribute BetViewModel betViewModel,
-        BindingResult bindingResult,
-        Model model)
-    {
+    @Transactional
+    @PostMapping("lots/{lotId}")
+    public String postLot(
+            @PathVariable Long lotId,
+            @ModelAttribute BetViewModel viewModel,
+            BindingResult bindingResult,
+            Model model) {
+
         if(bindingResult.hasErrors())
             return "/lots"; //Todo
 
-        /*var bet = new Bet(
-            betViewModel.userId,
-            betViewModel.outcomeId,
-            betViewModel.price);
+        var bet = new Bet(
+                viewModel.getLogin(),
+                viewModel.getOutcomeId(),
+                viewModel.getBetSize());
 
-        _betRepository.add(bet);
+        var result = betApplicator.applyBet(bet);
+        PrepareModelLot(model, lotId);
+        model.addAttribute("gameWin", result.isWin());
+        model.addAttribute("gameResult", result.getGameOutcomeView());
 
-        var lot = _lotRepository.getById(betViewModel.lotId);
-        var result = _lotsPlayer.playLot(lot, bet);
-
-        model.addAttribute("lot", lot);
-        model.addAttribute("result", result);*/
-
-
-        return "/lots/a";
+        return "/gaming/lot";
     }
 
+    private void PrepareModelLot(Model model, Long lotId){
+        var lot = lotsRepo.getById(lotId);
+        Map<Long, String> outcomesMap = new HashMap<Long, String>();
+        for (var outcome:
+                lot.getOutcomes()) {
+            outcomesMap.put(outcome.getId(), outcome.getValue());
+        }
 
+        model.addAttribute("lot", lot);
+        model.addAttribute("outcomesMap", outcomesMap);
+        model.addAttribute("viewModel", new BetViewModel());
+    }
 }
