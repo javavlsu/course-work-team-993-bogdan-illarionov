@@ -13,11 +13,11 @@ public final class PlayingResult implements IReadOnlyPlayingResult {
             boolean isWin,
             double winPrice,
             long betId,
-            String gameOutcomeViewiew) {
+            String gameOutcomeView) {
         this.isWin = isWin;
         this.winPrice = winPrice;
         this.betId = betId;
-        this.gameOutcomeView = gameOutcomeViewiew;
+        this.gameOutcomeView = gameOutcomeView;
     }
 
     public PlayingResult() {
