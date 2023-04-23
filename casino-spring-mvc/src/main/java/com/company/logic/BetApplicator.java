@@ -14,6 +14,7 @@ import com.company.storage.models.StorageOutcome;
 import com.company.storage.models.StorageUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -30,7 +31,7 @@ public class BetApplicator implements IBetApplicator {
     @Autowired
     private IGamePlayerFactory gamePlayerFactory;
 
-    @Transactional(propagation = Propagation.SUPPORTS)
+    @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.REPEATABLE_READ)
     @Override
     public IReadOnlyPlayingResult applyBet(Bet bet) {
         var user = userRepository.findByUserLogin(bet.getUserLogin());
