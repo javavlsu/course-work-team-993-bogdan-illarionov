@@ -27,7 +27,7 @@
             <form:input class="form-control" value="${outcome.getValue()}" type="text" id="valueString" path="value" readonly="true"/>
           </div>
           <div class="row">
-            <label for="koef">Value</label>
+            <label for="koef">Koef</label>
             <form:input class="form-control" value="${outcome.getKoef()}" type="number" step="0.01" id="koef" path="koef"/>
           </div>
           <br/>

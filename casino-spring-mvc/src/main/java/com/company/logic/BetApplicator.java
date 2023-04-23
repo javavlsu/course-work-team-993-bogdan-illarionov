@@ -14,7 +14,9 @@ import com.company.storage.models.StorageOutcome;
 import com.company.storage.models.StorageUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 @Service
 @Transactional
@@ -28,6 +30,7 @@ public class BetApplicator implements IBetApplicator {
     @Autowired
     private IGamePlayerFactory gamePlayerFactory;
 
+    @Transactional(propagation = Propagation.SUPPORTS)
     @Override
     public IReadOnlyPlayingResult applyBet(Bet bet) {
         var user = userRepository.findByUserLogin(bet.getUserLogin());
@@ -44,7 +47,7 @@ public class BetApplicator implements IBetApplicator {
         return getPlayingResult(storageBet);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     private PlayingResult getPlayingResult(StorageBet bet){
         var resultGameOutcome = getResultGame(bet);
 
@@ -63,17 +66,22 @@ public class BetApplicator implements IBetApplicator {
                 resultGameOutcome.getView());
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     private StorageGameOutcome getResultGame(StorageBet bet){
-        var player = gamePlayerFactory.createGamePlayer(bet.getUser(), bet.getOutcome());
+        try{
+            var player = gamePlayerFactory.createGamePlayer(bet.getUser(), bet.getOutcome());
 
-        return player.playGame(bet.getOutcome()
-                .getLot()
-                .getGameOutcomes().stream()
-                .toList());
+            return player.playGame(bet.getOutcome()
+                    .getLot()
+                    .getGameOutcomes().stream()
+                    .toList());
+        }catch (RuntimeException ex){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            throw ex;
+        }
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     private boolean betIsWin(StorageOutcome outcome, StorageGameOutcome result){
         return outcome.getRelatedGameOutcomes().contains(result);
     }
