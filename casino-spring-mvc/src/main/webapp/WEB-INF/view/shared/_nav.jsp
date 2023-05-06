@@ -7,6 +7,7 @@
 <spring:url value="/index" var="homeLink" />
 <spring:url value="/account/manage" var="manageUsersLink" />
 <spring:url value="/lots/manage" var="manageLotLink" />
+<spring:url value="/bets" var="myBetsLink" />
 
 <header>
   <nav
@@ -50,6 +51,11 @@
               <li class="nav-item">
                 <a class="nav-link text-dark" href="${manageLotLink}">Manage Lots</a>
               </li>
+          </sec:authorize>
+          <sec:authorize access="hasAnyAuthority('Player')">
+            <li class="nav-item">
+              <a class="nav-link text-dark" href="${myBetsLink}">My bets</a>
+            </li>
           </sec:authorize>
         </ul>
         <jsp:include page="_login.jsp" />
