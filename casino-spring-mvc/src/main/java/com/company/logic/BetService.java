@@ -3,7 +3,7 @@ package com.company.logic;
 import com.company.abstractions.IBetRepository;
 import com.company.abstractions.IBetService;
 import com.company.abstractions.IRepository;
-import com.company.storage.jpa.IUserRepository;
+import com.company.storage.jpa.IUserJpaRepository;
 import com.company.storage.models.StorageBet;
 import com.company.storage.models.StorageLot;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import java.util.Set;
 @Service
 public class BetService implements IBetService {
     @Autowired
-    public IUserRepository userRepository;
+    public IUserJpaRepository userRepository;
 
     @Autowired
     public IRepository<StorageLot, Long> lotRepository;
