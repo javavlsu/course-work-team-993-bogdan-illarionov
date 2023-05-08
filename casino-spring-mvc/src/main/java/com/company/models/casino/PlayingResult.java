@@ -2,16 +2,18 @@ package com.company.models.casino;
 
 import com.company.abstractions.IReadOnlyPlayingResult;
 
+import java.math.BigDecimal;
+
 public final class PlayingResult implements IReadOnlyPlayingResult {
     private boolean isWin;
-    private double winPrice;
+    private BigDecimal winPrice;
     private long betId;
 
     private String gameOutcomeView;
 
     public PlayingResult(
             boolean isWin,
-            double winPrice,
+            BigDecimal winPrice,
             long betId,
             String gameOutcomeView) {
         this.isWin = isWin;
@@ -34,7 +36,7 @@ public final class PlayingResult implements IReadOnlyPlayingResult {
     }
 
     @Override
-    public double getWinPrice() {
+    public BigDecimal getWinPrice() {
         return winPrice;
     }
 
@@ -47,7 +49,7 @@ public final class PlayingResult implements IReadOnlyPlayingResult {
         isWin = win;
     }
 
-    public void setWinPrice(double winPrice) {
+    public void setWinPrice(BigDecimal winPrice) {
         this.winPrice = winPrice;
     }
 

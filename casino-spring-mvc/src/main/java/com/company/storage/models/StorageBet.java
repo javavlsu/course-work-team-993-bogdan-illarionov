@@ -3,6 +3,8 @@ package com.company.storage.models;
 import com.company.models.casino.BetStatus;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "bets")
 public class StorageBet {
@@ -16,19 +18,19 @@ public class StorageBet {
     @JoinColumn(name="outcome_id")
     private StorageOutcome outcome;
     @Column(name = "sum")
-    private Double sum;
+    private BigDecimal sum;
     @Column(name = "status")
     private BetStatus betStatus;
 
     public StorageBet() {
     }
-    public StorageBet(StorageUser user, StorageOutcome outcome, Double sum, BetStatus betStatus) {
+    public StorageBet(StorageUser user, StorageOutcome outcome, BigDecimal sum, BetStatus betStatus) {
         this.user = user;
         this.outcome = outcome;
         this.sum = sum;
         this.betStatus = betStatus;
     }
-    public StorageBet(Long id, StorageUser user, StorageOutcome outcome, Double sum, BetStatus betStatus) {
+    public StorageBet(Long id, StorageUser user, StorageOutcome outcome, BigDecimal sum, BetStatus betStatus) {
         this(user, outcome, sum, betStatus);
         this.id = id;
     }
@@ -56,11 +58,11 @@ public class StorageBet {
     public void setOutcome(StorageOutcome outcome) {
         this.outcome = outcome;
     }
-    public Double getSum() {
+    public BigDecimal getSum() {
         return sum;
     }
 
-    public void setSum(Double sum) {
+    public void setSum(BigDecimal sum) {
         this.sum = sum;
     }
 

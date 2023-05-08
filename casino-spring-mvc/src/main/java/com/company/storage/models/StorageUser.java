@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 @Entity
@@ -19,11 +20,15 @@ public class StorageUser {
 
     @Column(name = "login")
     private String login;
+
     @Column(name = "password")
     private String password;
 
     @Column(name = "email")
     private String email;
+
+    @Column(name = "balance")
+    private BigDecimal balance;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -37,7 +42,7 @@ public class StorageUser {
             return null;
         }
 
-        return new User(storageUser.login, storageUser.password, storageUser.email, storageUser.roles);
+        return new User(storageUser.id, storageUser.login, storageUser.password, storageUser.email, storageUser.roles, storageUser.balance);
     }
 
     public StorageUser() {

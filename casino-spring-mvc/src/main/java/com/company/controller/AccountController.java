@@ -2,16 +2,20 @@ package com.company.controller;
 
 import com.company.models.account.Role;
 import com.company.models.account.User;
+import com.company.models.view.AddBalanceViewModel;
 import com.company.models.view.LoginViewModel;
 import com.company.models.view.ProfileViewModel;
 import com.company.models.view.RegisterViewModel;
 import com.company.logic.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 
 @Controller
@@ -55,7 +59,8 @@ public class AccountController {
                 viewModel.getLogin(),
                 viewModel.getPassword(),
                 viewModel.getEmail(),
-                new HashSet<Role>());
+                new HashSet<Role>(),
+                BigDecimal.ZERO);
 
         userService.RegisterUser(user);
 
@@ -171,7 +176,9 @@ public class AccountController {
 
     @PostMapping("/profile/index")
     public String postProfile(@ModelAttribute ProfileViewModel viewModel, Model model) {
-        if (userService.findByLogin(viewModel.getLogin()).isEmpty()) {
+        var findUser = userService.findByLogin(viewModel.getLogin());
+
+        if (findUser.isEmpty()) {
             return "/index";
         }
 
@@ -179,7 +186,8 @@ public class AccountController {
                 viewModel.getLogin(),
                 viewModel.getPassword(),
                 viewModel.getEmail(),
-                new HashSet<Role>());
+                findUser.get().getRoles(),
+                findUser.get().getBalance());
 
         userService.UpdateUser(user);
 
@@ -188,10 +196,38 @@ public class AccountController {
     }
 
     @GetMapping("/balance")
-    public String getBalance(Model model) {
+    public String getBalance(Authentication authentication, Model model) {
 
-        System.out.println(345);
+        var name = authentication.getName();
+
+        var user = userService.findByLogin(name);
+
+        if (user.isEmpty()) {
+            return "/index";
+        }
+
+        var viewModel = new AddBalanceViewModel();
+
+        model.addAttribute("viewModel", viewModel);
 
         return "/account/balance";
+    }
+
+    @PostMapping("/balance")
+    public String getBalance(Authentication authentication, @ModelAttribute AddBalanceViewModel viewModel, Model model) {
+
+        var name = authentication.getName();
+
+        var user = userService.findByLogin(name);
+
+        if (user.isEmpty()) {
+            return "/index";
+        }
+
+        userService.ChangeUserBalance(user.get().getLogin(), viewModel.getPositiveBalanceDelta());
+
+        userService.UpdateAuthorizeUserData(userService.findByLogin(name).get());
+
+        return "/index";
     }
 }

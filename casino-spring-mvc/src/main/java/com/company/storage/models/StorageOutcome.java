@@ -3,6 +3,7 @@ package com.company.storage.models;
 import com.company.models.casino.Outcome;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -17,7 +18,7 @@ public class StorageOutcome {
     private String value;
 
     @Column(name = "koef")
-    private Double koef;
+    private BigDecimal koef;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="lot_id")
@@ -37,7 +38,7 @@ public class StorageOutcome {
     public StorageOutcome(
             Long id,
             String value,
-            Double koef,
+            BigDecimal koef,
             StorageLot lot,
             Set<StorageGameOutcome> relatedGameOutcomes) {
         this.id = id;
@@ -71,10 +72,10 @@ public class StorageOutcome {
         this.value = value;
     }
 
-    public void setKoef(Double koef) {
+    public void setKoef(BigDecimal koef) {
         this.koef = koef;
     }
-    public Double getKoef() {
+    public BigDecimal getKoef() {
         return koef;
     }
 
