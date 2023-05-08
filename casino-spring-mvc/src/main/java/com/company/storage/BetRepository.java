@@ -5,9 +5,12 @@ import com.company.storage.jpa.IBetJpaRepository;
 import com.company.storage.models.StorageBet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Set;
 
 @Service
-public class BetRepository implements IRepository<StorageBet, Long> {
+public class BetRepository implements com.company.abstractions.IBetRepository {
     @Autowired
     private IBetJpaRepository betRepository;
 
@@ -34,5 +37,11 @@ public class BetRepository implements IRepository<StorageBet, Long> {
     @Override
     public void update(StorageBet storageBet) {
         betRepository.saveAndFlush(storageBet);
+    }
+
+    @Transactional
+    @Override
+    public Set<StorageBet> GetBetsByUserId(Long userId) {
+        return betRepository.findAllByUserId(userId);
     }
 }
