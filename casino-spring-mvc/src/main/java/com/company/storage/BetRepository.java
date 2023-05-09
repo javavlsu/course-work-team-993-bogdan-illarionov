@@ -1,7 +1,7 @@
 package com.company.storage;
 
 import com.company.abstractions.IRepository;
-import com.company.storage.jpa.IBetRepository;
+import com.company.storage.jpa.IBetJpaRepository;
 import com.company.storage.models.StorageBet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,7 @@ import java.util.Set;
 @Service
 public class BetRepository implements com.company.abstractions.IBetRepository {
     @Autowired
-    private IBetRepository betRepository;
+    private IBetJpaRepository betRepository;
 
     @Override
     public Iterable<StorageBet> getAll() {

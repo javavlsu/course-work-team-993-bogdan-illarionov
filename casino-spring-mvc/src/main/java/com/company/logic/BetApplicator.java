@@ -1,17 +1,14 @@
 package com.company.logic;
 
-import com.company.abstractions.IBetApplicator;
-import com.company.abstractions.IGamePlayerFactory;
-import com.company.abstractions.IReadOnlyPlayingResult;
-import com.company.abstractions.IRepository;
+import com.company.abstractions.*;
+import com.company.models.account.User;
 import com.company.models.casino.Bet;
 import com.company.models.casino.BetStatus;
 import com.company.models.casino.PlayingResult;
-import com.company.storage.jpa.IUserRepository;
+import com.company.storage.jpa.IUserJpaRepository;
 import com.company.storage.models.StorageBet;
 import com.company.storage.models.StorageGameOutcome;
 import com.company.storage.models.StorageOutcome;
-import com.company.storage.models.StorageUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -25,7 +22,7 @@ public class BetApplicator implements IBetApplicator {
     @Autowired
     private IRepository<StorageBet, Long> betRepository;
     @Autowired
-    private IUserRepository userRepository;
+    private IUserService userService;
     @Autowired
     private IRepository<StorageOutcome, Long> outcomeRepository;
     @Autowired
@@ -34,18 +31,42 @@ public class BetApplicator implements IBetApplicator {
     @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.REPEATABLE_READ)
     @Override
     public IReadOnlyPlayingResult applyBet(Bet bet) {
-        var user = userRepository.findByUserLogin(bet.getUserLogin());
+        var user = userService.findByLogin(bet.getUserLogin());
+
+        if (user.isEmpty())
+        {
+            return null;
+        }
+
+
+        if (user.get().getBalance().compareTo(bet.getPrice()) == -1)
+        {
+            return null;
+        }
+
         var outcome = outcomeRepository.getById(bet.getOutcomeId());
 
         var storageBet = new StorageBet(
-                user,
+                User.ToStorage(user.get()),
                 outcome,
                 bet.getPrice(),
                 bet.getStatus());
 
         betRepository.add(storageBet);
 
-        return getPlayingResult(storageBet);
+        userService.ChangeUserBalance(user.get().getLogin() ,bet.getPrice().negate());
+
+        var result = getPlayingResult(storageBet);
+
+        if (result.isWin())
+        {
+            var winSum = bet.getPrice().multiply(result.getWinPrice());
+            userService.ChangeUserBalance(user.get().getLogin(), winSum);
+        }
+
+        userService.UpdateAuthorizeUserData(userService.findByLogin(bet.getUserLogin()).get());
+
+        return result;
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)

@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface IUserRepository extends JpaRepository<StorageUser, Long> {
+public interface IUserJpaRepository extends JpaRepository<StorageUser, Long> {
 
     @Query("SELECT u FROM StorageUser u WHERE u.login = :name")
     public StorageUser findByUserLogin(@Param("name") String login);

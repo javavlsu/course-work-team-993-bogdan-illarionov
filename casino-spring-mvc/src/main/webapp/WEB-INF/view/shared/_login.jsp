@@ -25,11 +25,9 @@
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link text-dark" href="${balanceLink}">Balance</a>
+      <a class="nav-link text-dark" href="${balanceLink}"><sec:authentication property="principal.balance"/> &#8376;</a>
     </li>
     <li class="nav-item">
-      <!-- <a class="nav-link text-dark" href="${logoutLink}">LogOut</a> -->
-
       <form:form action="${logoutLink}" method="POST">
         <input type="submit" value="Logout" class="btn btn-danger"/>
       </form:form>

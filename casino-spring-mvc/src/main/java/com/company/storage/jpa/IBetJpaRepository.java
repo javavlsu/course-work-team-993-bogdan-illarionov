@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
-public interface IBetRepository extends JpaRepository<StorageBet, Long> {
+public interface IBetJpaRepository extends JpaRepository<StorageBet, Long> {
     @Transactional
     @Query("select b from StorageBet b " +
             "INNER JOIN b.user u " +
