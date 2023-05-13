@@ -5,7 +5,6 @@ import com.company.models.account.User;
 import com.company.models.casino.Bet;
 import com.company.models.casino.BetStatus;
 import com.company.models.casino.PlayingResult;
-import com.company.storage.jpa.IUserJpaRepository;
 import com.company.storage.models.StorageBet;
 import com.company.storage.models.StorageGameOutcome;
 import com.company.storage.models.StorageOutcome;
@@ -28,7 +27,7 @@ public class BetApplicator implements IBetApplicator {
     @Autowired
     private IGamePlayerFactory gamePlayerFactory;
 
-    @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.REPEATABLE_READ)
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ)
     @Override
     public IReadOnlyPlayingResult applyBet(Bet bet) {
         var user = userService.findByLogin(bet.getUserLogin());
@@ -69,7 +68,6 @@ public class BetApplicator implements IBetApplicator {
         return result;
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     private PlayingResult getPlayingResult(StorageBet bet){
         var resultGameOutcome = getResultGame(bet);
 
@@ -88,7 +86,6 @@ public class BetApplicator implements IBetApplicator {
                 resultGameOutcome.getView());
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
     private StorageGameOutcome getResultGame(StorageBet bet){
         try{
             var player = gamePlayerFactory.createGamePlayer(bet.getUser(), bet.getOutcome());
@@ -103,7 +100,6 @@ public class BetApplicator implements IBetApplicator {
         }
     }
 
-    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     private boolean betIsWin(StorageOutcome outcome, StorageGameOutcome result){
         return outcome.getRelatedGameOutcomes().contains(result);
     }

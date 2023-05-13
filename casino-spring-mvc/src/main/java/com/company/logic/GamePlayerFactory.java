@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class GamePlayerFactory implements IGamePlayerFactory {
     private final DefaultGamePlayer defaultGamePlayer = new DefaultGamePlayer();
+    private final Integer DEFAULT_CHANCE = 0;
 
     @Override
     public IGamePlayer createGamePlayer(
@@ -16,7 +17,7 @@ public class GamePlayerFactory implements IGamePlayerFactory {
             StorageOutcome selectedOutcome) {
         var chance = user.getIncreasedChance();
 
-        if (chance != 0){
+        if (!chance.equals(DEFAULT_CHANCE)){
             return new IncreasedChanceGamePlayer(
                     defaultGamePlayer,
                     chance,
