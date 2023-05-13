@@ -1,7 +1,7 @@
 package com.company.storage;
 
 import com.company.abstractions.IRepository;
-import com.company.storage.jpa.IGameOutcomesRepository;
+import com.company.storage.jpa.IGameOutcomesJpaRepository;
 import com.company.storage.models.StorageGameOutcome;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class GameOutcomesRepository implements IRepository<StorageGameOutcome, Long> {
     @Autowired
-    public IGameOutcomesRepository gameOutcomesRepository;
+    public IGameOutcomesJpaRepository gameOutcomesRepository;
 
     @Override
     public Iterable<StorageGameOutcome> getAll() {

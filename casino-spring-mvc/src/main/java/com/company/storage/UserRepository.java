@@ -1,15 +1,23 @@
 package com.company.storage;
 
 import com.company.abstractions.IRepository;
-import com.company.storage.jpa.IUserRepository;
+import com.company.abstractions.IUserRepository;
+import com.company.models.account.Role;
+import com.company.storage.jpa.IRoleJpaRepository;
+import com.company.storage.jpa.IUserJpaRepository;
 import com.company.storage.models.StorageUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
-public class UserRepository implements IRepository<StorageUser, Long> {
+public class UserRepository implements IUserRepository {
     @Autowired
-    private IUserRepository userRepository;
+    private IUserJpaRepository userRepository;
+    @Autowired
+    private IRoleJpaRepository roleRepository;
 
     @Override
     public Iterable<StorageUser> getAll() {
@@ -34,5 +42,15 @@ public class UserRepository implements IRepository<StorageUser, Long> {
     @Override
     public void update(StorageUser storageUser) {
         userRepository.saveAndFlush(storageUser);
+    }
+
+    @Override
+    public Optional<StorageUser> getByLogin(String login) {
+        return Optional.ofNullable(userRepository.findByUserLogin(login));
+    }
+
+    @Override
+    public List<Role> getRoles() {
+        return roleRepository.findAll();
     }
 }

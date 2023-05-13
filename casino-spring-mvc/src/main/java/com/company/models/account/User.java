@@ -1,20 +1,19 @@
 package com.company.models.account;
 
+import com.company.storage.models.StorageUser;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 public class User implements UserDetails {
-
-    public static final String REGEX_LOGIN = "[a-zA-Z0-9]*";
-    public static final String REGEX_PASSWORD = "[a-zA-Z0-9]*";
 
     @Getter
     private final String login;
@@ -29,11 +28,25 @@ public class User implements UserDetails {
     @Getter
     private final Set<Role> roles;
 
-    public User(String login, String password, String email, Set<Role> roles) {
+    @Getter
+    @Setter
+    private BigDecimal balance;
+
+    public User(Long id, String login, String password, String email, Set<Role> roles, BigDecimal balance) {
+        this.id = id;
         this.login = login;
         this.password = password;
         this.email = email;
         this.roles = roles;
+        this.balance = balance;
+    }
+
+    public User(String login, String password, String email, Set<Role> roles, BigDecimal balance) {
+        this.login = login;
+        this.password = password;
+        this.email = email;
+        this.roles = roles;
+        this.balance = balance;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.company.models.casino;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.Set;
 
@@ -9,7 +10,7 @@ import java.util.Set;
 public final class Outcome {
     private final long _id;
     private final String _value;
-    private final double _coefficient;
+    private final BigDecimal _coefficient;
 
     private final Set<GameOutcome> _relatedGameOutcomes;
 
@@ -23,7 +24,7 @@ public final class Outcome {
     public Outcome(
             long id,
             String value,
-            double coefficient,
+            BigDecimal coefficient,
             Set<GameOutcome> gameOutcomes) throws IllegalArgumentException {
         _id = id;
 
@@ -31,7 +32,7 @@ public final class Outcome {
             throw new IllegalArgumentException("Value can't be empty");
         _value = value;
 
-        if (coefficient <= 1.0)
+        if (coefficient.compareTo(BigDecimal.ONE) == -1)
             throw new IllegalArgumentException("Coefficient can't be equals or less then 1.0");
         _coefficient = coefficient;
 
@@ -60,7 +61,7 @@ public final class Outcome {
      * Возвращает коэффициент игрового исхода.
      * @return Объект типа {@link double}.
      */
-    public double getCoefficient(){
+    public BigDecimal getCoefficient(){
         return _coefficient;
     }
 
@@ -78,7 +79,7 @@ public final class Outcome {
         if (o == null || getClass() != o.getClass()) return false;
         Outcome outcome = (Outcome) o;
         return _id == outcome._id &&
-            Double.compare(outcome._coefficient, _coefficient) == 0 &&
+                outcome._coefficient.compareTo(_coefficient) == 0 &&
             _value.equals(outcome._value);
     }
     @Override

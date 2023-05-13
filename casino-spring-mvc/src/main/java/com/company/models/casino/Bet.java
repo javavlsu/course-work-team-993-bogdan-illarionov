@@ -1,12 +1,14 @@
 package com.company.models.casino;
 
+import java.math.BigDecimal;
+
 /**
  * Игровая ставка.
  */
 public final class Bet {
     private String _userLogin;
     private Long _outcomeId;
-    private final Double _price;
+    private final BigDecimal _price;
     private BetStatus _status = BetStatus.Unknown;
 
     /**
@@ -16,12 +18,12 @@ public final class Bet {
     public Bet(
         String userLogin,
         Long outcomeId,
-        Double price) throws IllegalArgumentException {
+        BigDecimal price) throws IllegalArgumentException {
 
         _userLogin = userLogin;
         _outcomeId = outcomeId;
 
-        if (price <= 1.0)
+        if (price.compareTo(BigDecimal.ONE) == -1)
             throw new IllegalArgumentException("Price can't be equal or less then 1.0");
 
         _price = price;
@@ -44,7 +46,7 @@ public final class Bet {
     /**
      * Возвращает размер ставки.
      */
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return _price;
     }
 

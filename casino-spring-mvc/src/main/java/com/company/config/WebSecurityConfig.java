@@ -2,7 +2,7 @@ package com.company.config;
 
 import com.company.bean.PSD;
 import com.company.models.CasinoUserDetailsService;
-import com.company.storage.jpa.IUserRepository;
+import com.company.storage.jpa.IUserJpaRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,7 +16,7 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @EnableWebSecurity
 public class WebSecurityConfig {
     @Bean
-    public UserDetailsService userDetailsService(IUserRepository userRepository) {
+    public UserDetailsService userDetailsService() {
         return new CasinoUserDetailsService();
     }
 

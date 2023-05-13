@@ -6,10 +6,12 @@ import jakarta.validation.constraints.Min;
 import lombok.Data;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.math.BigDecimal;
+
 @Data
 public class BetViewModel {
     private String login = SecurityContextHolder.getContext().getAuthentication().getName();
     private Long outcomeId;
     @Min(10)
-    private Double betSize;
+    private BigDecimal betSize;
 }
