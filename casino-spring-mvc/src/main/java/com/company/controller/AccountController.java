@@ -6,12 +6,14 @@ import com.company.models.view.LoginViewModel;
 import com.company.models.view.ProfileViewModel;
 import com.company.models.view.RegisterViewModel;
 import com.company.logic.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashSet;
 
 @Controller
@@ -25,9 +27,6 @@ public class AccountController {
     public String getLogin(Model model) {
 
             var viewModel = new LoginViewModel();
-
-            viewModel.setUsername("default");
-            viewModel.setPassword("password");
 
             model.addAttribute("loginModel", viewModel);
 
@@ -45,21 +44,22 @@ public class AccountController {
     }
 
     @PostMapping("/register")
-    public String postRegister(@ModelAttribute RegisterViewModel viewModel, Model model) {
-
-        if (!userService.findByLogin(viewModel.getLogin()).isEmpty()) {
+    public String postRegister(@Valid @ModelAttribute("viewModel") RegisterViewModel viewModel, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
             return "/account/register";
         }
 
-        var user = new User(
-                viewModel.getLogin(),
-                viewModel.getPassword(),
-                viewModel.getEmail(),
-                new HashSet<Role>());
+        if (userService.findByLogin(viewModel.getLogin()).isPresent()) {
+            var error = new FieldError("viewModel","login", "Given login already exists.");
 
-        userService.RegisterUser(user);
+            bindingResult.addError(error);
 
-        return "/index";
+            return "/account/register";
+        }
+
+        userService.RegisterUser(RegisterViewModel.ToUser(viewModel));
+
+        return "redirect:/account/login";
 
     }
 
@@ -156,13 +156,10 @@ public class AccountController {
         var user = userService.findByLogin(name);
 
         if (user.isEmpty()) {
-            return "/index";
+            return "redirect:/account/register";
         }
 
-        var viewModel = new ProfileViewModel(
-                user.get().getLogin(),
-                user.get().getEmail(),
-                user.get().getPassword());
+        var viewModel = ProfileViewModel.ToView(user.get());
 
         model.addAttribute("viewModel", viewModel);
 
@@ -170,20 +167,31 @@ public class AccountController {
     }
 
     @PostMapping("/profile/index")
-    public String postProfile(@ModelAttribute ProfileViewModel viewModel, Model model) {
-        if (userService.findByLogin(viewModel.getLogin()).isEmpty()) {
-            return "/index";
+    public String postProfile(@Valid @ModelAttribute("viewModel") ProfileViewModel viewModel, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return "/profile/index";
         }
 
-        var user = new User(
-                viewModel.getLogin(),
-                viewModel.getPassword(),
-                viewModel.getEmail(),
-                new HashSet<Role>());
+        var user = userService.findByLogin(viewModel.getLogin());
 
-        userService.UpdateUser(user);
+        if (user.isEmpty()) {
+            return "redirect:/account/register";
+        }
 
-        return "/index";
+        if (!user.get().getPassword().equals(viewModel.getPassword())) {
+            var error = new FieldError("viewModel","password", "Password not match with current password.");
+
+            bindingResult.addError(error);
+
+            return "/profile/index";
+        }
+
+        user.get().setEmail(viewModel.getEmail());
+
+        userService.UpdateUser(user.get());
+
+        return "redirect:/profile/index";
 
     }
 

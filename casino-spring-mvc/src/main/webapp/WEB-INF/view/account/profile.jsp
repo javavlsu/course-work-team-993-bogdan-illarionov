@@ -20,15 +20,19 @@
           <h1>Profile!</h1>
           <form:hidden path = "login"/>
           <div class="row">
-            <label for="psdString">Password</label>
-            <form:input class="form-control" type="text" id="psdString" path="password"/>
+            <label for="psdString">Email</label>
+            <form:input class="form-control" type="text" id="emailString" path="email"/>
+            <form:errors path="email" cssClass="error"/>
           </div>
           <br/>
           <br/>
           <div class="row">
-            <label for="psdString">Email</label>
-            <form:input class="form-control" type="text" id="emailString" path="email"/>
+            <label for="psdString">Password</label>
+            <form:input class="form-control" type="text" id="psdString" path="password"/>
+            <form:errors path="password" cssClass="error"/>
           </div>
+          <br/>
+          <br/>
           <br/>
           <!-- onclick="location.href='/basket/add?itemId=@Model.Item.Key.Value&&providerId=@Model.Provider.Key.Value'" -->
           <div class="row">
