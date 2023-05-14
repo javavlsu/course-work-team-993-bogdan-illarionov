@@ -33,7 +33,13 @@
                                <td><c:out value="${bet.getId()}" /></td>
                                <td><c:out value="${bet.getOutcome().getLot().getName()}" /></td>
                                <td><c:out value="${bet.getOutcome().getValue()}" /></td>
-                               <td><c:out value="${bet.getSum()}" /></td>
+                               <td><c:out
+                                    value="${bet.getSum()} ->
+                                        ${bet.getBetStatus() == \"Loss\"
+                                        ? 0
+                                        : bet.getBetStatus() == \"Unknown\"
+                                            ? \"??\"
+                                            :bet.getOutcome().getKoef() * bet.getSum() }" /></td>
                                <td><c:out value="${bet.getBetStatus().toString()}" /></td>
 
                             </tr>
