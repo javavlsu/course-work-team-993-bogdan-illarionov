@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 
 @Data
@@ -38,6 +39,7 @@ public class RegisterViewModel {
                 viewModel.getLogin(),
                 viewModel.getPassword(),
                 viewModel.getEmail(),
-                new HashSet<>());
+                new HashSet<>(),
+                BigDecimal.ZERO);
     }
 }
