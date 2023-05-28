@@ -21,11 +21,13 @@
           <div class="row">
             <label for="accountNumber">Account:</label>
             <form:input class="form-control" type="text" id="accountNumber" path="account"/>
+            <form:errors path="account" cssClass="error"/>
           </div>
           <br/>
           <div class="row">
             <label for="balanceDelta">Add</label>
-            <form:input class="form-control" type="number" id="balanceDelta" path="positiveBalanceDelta"/>
+            <form:input class="form-control" type="number" id="balanceDelta" step="0.01" path="positiveBalanceDelta"/>
+            <form:errors path="positiveBalanceDelta" cssClass="error"/>
           </div>
           <br/>
           <!-- onclick="location.href='/basket/add?itemId=@Model.Item.Key.Value&&providerId=@Model.Provider.Key.Value'" -->

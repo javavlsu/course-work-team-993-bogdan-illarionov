@@ -2,9 +2,7 @@ package com.company.controller;
 
 import com.company.models.account.Role;
 import com.company.models.account.User;
-import com.company.models.view.LoginViewModel;
-import com.company.models.view.ProfileViewModel;
-import com.company.models.view.RegisterViewModel;
+import com.company.models.view.*;
 import com.company.logic.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +13,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/account")
@@ -69,53 +69,33 @@ public class AccountController {
 
         var users = userService.getUsers();
 
-        model.addAttribute("users", users);
+        var roles = userService.getRoles();
+
+        var viewModel = new ManageUsersViewModel();
+
+        viewModel.setRoles(roles);
+
+        for (var user : users) {
+            viewModel.addUser(user);
+        }
+
+        model.addAttribute("viewModel", viewModel);
 
         return "/account/manage";
     }
 
-    @GetMapping("/manage/user")
-    public String getManageUser(@RequestParam String name,Model model) {
-
-        //var roles = usersService.getRoles();
-
-        var user = userService.findByLogin(name);
-
-        if (user.isEmpty()) {
-            return "/index";
-        }
-
-        var roles = new HashSet<Role>();
-
-        for (var role : userService.getRoles()) {
-
-            if (user.get().getRoles().stream().anyMatch(x -> x.getName().equals(role.getName()))) {
-                continue;
-            }
-
-            roles.add(role);
-
-        }
-
-        model.addAttribute("roles", roles);
-        model.addAttribute("login", name);
-        model.addAttribute("users_roles", user.get().getRoles().stream().toList());
-
-        return "/account/manage_user";
-    }
-
-    @GetMapping("/manage/user/add")
+    @GetMapping("/manage/add")
     public String getAddRole(@RequestParam String name, @RequestParam Short role, Model model) {
         var user = userService.findByLogin(name);
 
         if (user.isEmpty()) {
-            return "/index";
+            return "redirect:/account/manage";
         }
 
-        var roleToAdd = userService.getRoles().stream().filter(x -> x.getId() == role).findFirst();
+        var roleToAdd = userService.getRoles().stream().filter(x -> Objects.equals(x.getId(), role)).findFirst();
 
         if (roleToAdd.isEmpty()) {
-            return "/index";
+            return "redirect:/account/manage";
         }
 
         var domain = user.get();
@@ -124,21 +104,21 @@ public class AccountController {
 
         userService.UpdateUser(domain);
 
-        return "/index";
+        return "redirect:/account/manage";
     }
 
-    @GetMapping("/manage/user/remove")
+    @GetMapping("/manage/remove")
     public String getRemoveRole(@RequestParam String name, @RequestParam Short role, Model model) {
         var user = userService.findByLogin(name);
 
         if (user.isEmpty()) {
-            return "/index";
+            return "redirect:/account/manage";
         }
 
-        var roleToRemove = userService.getRoles().stream().filter(x -> x.getId() == role).findFirst();
+        var roleToRemove = userService.getRoles().stream().filter(x -> Objects.equals(x.getId(), role)).findFirst();
 
         if (roleToRemove.isEmpty()) {
-            return "/index";
+            return "redirect:/account/manage";
         }
 
         var domain = user.get();
@@ -147,7 +127,7 @@ public class AccountController {
 
         userService.UpdateUser(domain);
 
-        return "/index";
+        return "redirect:/account/manage";
     }
 
     @GetMapping("/profile/index")
@@ -171,7 +151,7 @@ public class AccountController {
     public String postProfile(@Valid @ModelAttribute("viewModel") ProfileViewModel viewModel, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-            return "/profile/index";
+            return "/account/profile";
         }
 
         var user = userService.findByLogin(viewModel.getLogin());
@@ -185,22 +165,54 @@ public class AccountController {
 
             bindingResult.addError(error);
 
-            return "/profile/index";
+            return "/account/profile";
         }
 
         user.get().setEmail(viewModel.getEmail());
 
         userService.UpdateUser(user.get());
 
-        return "redirect:/profile/index";
+        return "redirect:/account/profile/index";
 
     }
 
     @GetMapping("/balance")
-    public String getBalance(Model model) {
+    public String getBalance(Authentication authentication, Model model) {
 
-        System.out.println(345);
+        var name = authentication.getName();
+
+        var user = userService.findByLogin(name);
+
+        if (user.isEmpty()) {
+            return "redirect:/index";
+        }
+
+        var viewModel = new AddBalanceViewModel();
+
+        model.addAttribute("viewModel", viewModel);
 
         return "/account/balance";
+    }
+
+    @PostMapping("/balance")
+    public String getBalance(Authentication authentication, @Valid @ModelAttribute("viewModel") AddBalanceViewModel viewModel, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return "/account/balance";
+        }
+
+        var name = authentication.getName();
+
+        var user = userService.findByLogin(name);
+
+        if (user.isEmpty()) {
+            return "redirect:/index";
+        }
+
+        userService.ChangeUserBalance(user.get().getLogin(), viewModel.getPositiveBalanceDelta());
+
+        userService.UpdateAuthorizeUserData(userService.findByLogin(name).get());
+
+        return "redirect:/index";
     }
 }

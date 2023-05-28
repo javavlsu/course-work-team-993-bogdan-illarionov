@@ -10,6 +10,7 @@ import com.company.models.view.RegisterViewModel;
 import com.company.storage.models.StorageLot;
 import com.company.models.view.BetViewModel;
 import com.company.storage.models.StorageOutcome;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -49,7 +50,7 @@ public class LotsController {
 
     @GetMapping("lots/{lotId}")
     public String getLot(@PathVariable Long lotId, Model model) {
-        PrepareModelLot(model, lotId);
+        prepareModelLot(model, lotId, true);
 
         return "/gaming/lot";
     }
@@ -58,12 +59,14 @@ public class LotsController {
     @PostMapping("lots/{lotId}")
     public String postLot(
             @PathVariable Long lotId,
-            @ModelAttribute BetViewModel viewModel,
+            @Valid @ModelAttribute("viewModel") BetViewModel viewModel,
             BindingResult bindingResult,
             Model model) {
 
-        if(bindingResult.hasErrors())
-            return "/lots"; //Todo
+        if(bindingResult.hasErrors()) {
+            prepareModelLot(model, lotId, false);
+            return "/gaming/lot";
+        }
 
         var bet = new Bet(
                 viewModel.getLogin(),
@@ -71,7 +74,8 @@ public class LotsController {
                 viewModel.getBetSize());
 
         var result = betApplicator.applyBet(bet);
-        PrepareModelLot(model, lotId);
+
+        prepareModelLot(model, lotId, true);
         model.addAttribute("gameWin", result.isWin());
         model.addAttribute("gameResult", result.getGameOutcomeView());
 
@@ -115,21 +119,20 @@ public class LotsController {
     @PostMapping("lots/manage/outcomes/edit/{outcomeId}")
     public String postManageOutcome(
             @PathVariable Long outcomeId,
-            @ModelAttribute EditOutcomeModel viewModel,
-            BindingResult bindingResult,
-            Model model) {
+            @Valid @ModelAttribute("viewModel") EditOutcomeModel viewModel,
+            BindingResult bindingResult) {
 
         if(bindingResult.hasErrors())
-            return getLots(model); //Todo
+            return "/gaming/edit-outcome";
 
         var outcome = outcomesRepo.getById(outcomeId);
         outcome.setKoef(viewModel.getKoef());
         outcomesRepo.update(outcome);
 
-        return getLots(model);
+        return "redirect:/lots/manage/outcomes/"+outcome.getLot().getId().toString();
     }
 
-    private void PrepareModelLot(Model model, Long lotId){
+    private void prepareModelLot(Model model, Long lotId, boolean newViewModel){
         var lot = lotsRepo.getById(lotId);
         Map<Long, String> outcomesMap = new HashMap<Long, String>();
         for (var outcome:
@@ -139,6 +142,9 @@ public class LotsController {
 
         model.addAttribute("lot", lot);
         model.addAttribute("outcomesMap", outcomesMap);
-        model.addAttribute("viewModel", new BetViewModel());
+
+        if (newViewModel) {
+            model.addAttribute("viewModel", new BetViewModel());
+        }
     }
 }

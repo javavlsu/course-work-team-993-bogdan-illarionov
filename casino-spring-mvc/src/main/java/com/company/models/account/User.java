@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Set;
 
 public class User implements UserDetails {
-    public static final String REGEX_LOGIN = "[a-zA-Z0-9]*";
-    public static final String REGEX_PASSWORD = "[a-zA-Z0-9]*";
+    public static final String REGEX_LOGIN = "^[a-zA-Z0-9]*";
+    public static final String REGEX_PASSWORD = "^[a-zA-Z0-9]*";
 
     @Getter
     private Long id;

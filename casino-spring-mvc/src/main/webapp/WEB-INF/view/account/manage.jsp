@@ -12,8 +12,7 @@
     
     <main class="content">
         <h1>Manage users!</h1>
-        <c:forEach items="${users}" var="user">
-            <spring:url value="/account/manage/user?name=${user.getLogin()}" var="userLink" />
+        <c:forEach items="${viewModel.usersRoles}" var="user">
             <div class="row">
                 <div class="col-md-1">
                     <a class="text-dark" href="${userLink}">
@@ -22,11 +21,19 @@
                         </h3>    
                     </a>
                 </div>
-
                 <div class="col-md-2 row">
-                    <c:forEach items="${user.getRoles()}" var="role">
+                    <c:forEach items="${viewModel.roles}" var="role">
                         <div class="col-md-4">
-                            <h3>${role.getName()}</h3>
+                            <c:choose>
+                                <c:when test="${user.checkRole(role.name)}">
+                                    <spring:url value="/account/manage/remove?name=${user.login}&role=${role.getId()}" var="link" />
+                                    <a href="${link}" class="text-primary"><h3>${role.getName()}</h3></a> 
+                                </c:when>    
+                                <c:otherwise>
+                                    <spring:url value="/account/manage/add?name=${user.login}&role=${role.getId()}" var="link" />
+                                    <a href="${link}" class="text-secondary"><h3>${role.getName()}</h3></a> 
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                     </c:forEach>
                 
