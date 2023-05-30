@@ -82,56 +82,6 @@ public class LotsController {
         return "/gaming/lot";
     }
 
-    @GetMapping("lots/manage")
-    public String getManage(Model model) {
-
-        model.addAttribute(
-                "lots",
-                StreamSupport
-                        .stream(lotsRepo.getAll().spliterator(), false)
-                        .collect(Collectors.toSet()));
-
-        return "/gaming/manage";
-    }
-
-    @GetMapping("lots/manage/outcomes/{lotId}")
-    public String getManageLot(@PathVariable Long lotId, Model model) {
-        model.addAttribute(
-                "outcomes",
-                lotsRepo.getById(lotId).getOutcomes()
-                        .stream()
-                        .sorted((a1,b1) -> Long.compare(a1.getId(),b1.getId()))
-                        .toList());
-
-        return "/gaming/manage-outcomes";
-    }
-
-    @GetMapping("lots/manage/outcomes/edit/{outcomeId}")
-    public String getManageOutcome(
-            @PathVariable Long outcomeId,
-            Model model) {
-        model.addAttribute("outcome", outcomesRepo.getById(outcomeId));
-        model.addAttribute("viewModel", new EditOutcomeModel());
-
-        return "/gaming/edit-outcome";
-    }
-
-    @PostMapping("lots/manage/outcomes/edit/{outcomeId}")
-    public String postManageOutcome(
-            @PathVariable Long outcomeId,
-            @Valid @ModelAttribute("viewModel") EditOutcomeModel viewModel,
-            BindingResult bindingResult) {
-
-        if(bindingResult.hasErrors())
-            return "/gaming/edit-outcome";
-
-        var outcome = outcomesRepo.getById(outcomeId);
-        outcome.setKoef(viewModel.getKoef());
-        outcomesRepo.update(outcome);
-
-        return "redirect:/lots/manage/outcomes/"+outcome.getLot().getId().toString();
-    }
-
     private void prepareModelLot(Model model, Long lotId, boolean newViewModel){
         var lot = lotsRepo.getById(lotId);
         Map<Long, String> outcomesMap = new HashMap<Long, String>();
