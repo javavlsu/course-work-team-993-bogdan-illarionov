@@ -37,11 +37,12 @@
       <div class="row form-group">
         <form:form method="POST" class="row" modelAttribute="viewModel">
         <div class="col-md-4">
-          <form:input class="form-control" type="number" step="0.1" id="sizeOfBet" path = "betSize"/>
+          <form:input class="form-control" type="number" step="0.01" id="sizeOfBet" path = "betSize"/>
+          <form:errors path="betSize" cssClass="error"/>
         </div>
         <div class="col-md-4">
           <form:select path="outcomeId">
-              <form:option value="-" label="Выберите исход"/>
+              <form:option value="0" label="Выберите исход"/>
               <form:options items="${outcomesMap}" />
           </form:select>
         </div>

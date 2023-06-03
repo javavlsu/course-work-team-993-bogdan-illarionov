@@ -1,20 +1,23 @@
 package com.company.models.view;
 
-
-import jakarta.validation.constraints.Max;
+import com.company.models.account.User;
+import com.company.storage.models.StorageUser;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Min;
 import lombok.Data;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
 
-@Validated
 @Data
 public class BetViewModel {
     private String login = SecurityContextHolder.getContext().getAuthentication().getName();
     private Long outcomeId;
-    @Min(10)
-    @Max(1000)
+
+    @Digits(integer = 6, fraction = 2)
+    @DecimalMin(value = "10.0", message = "Should be greater than 10.")
+    @DecimalMax(value = "10000.0", message = "Should be less than 10000.")
     private BigDecimal betSize;
 }

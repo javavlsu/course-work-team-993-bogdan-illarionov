@@ -2,21 +2,20 @@ package com.company.controller;
 
 import com.company.models.account.Role;
 import com.company.models.account.User;
-import com.company.models.view.AddBalanceViewModel;
-import com.company.models.view.LoginViewModel;
-import com.company.models.view.ProfileViewModel;
-import com.company.models.view.RegisterViewModel;
+import com.company.models.view.*;
 import com.company.logic.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/account")
@@ -29,9 +28,6 @@ public class AccountController {
     public String getLogin(Model model) {
 
             var viewModel = new LoginViewModel();
-
-            viewModel.setUsername("default");
-            viewModel.setPassword("password");
 
             model.addAttribute("loginModel", viewModel);
 
@@ -49,22 +45,22 @@ public class AccountController {
     }
 
     @PostMapping("/register")
-    public String postRegister(@ModelAttribute RegisterViewModel viewModel, Model model) {
-
-        if (!userService.findByLogin(viewModel.getLogin()).isEmpty()) {
+    public String postRegister(@Valid @ModelAttribute("viewModel") RegisterViewModel viewModel, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
             return "/account/register";
         }
 
-        var user = new User(
-                viewModel.getLogin(),
-                viewModel.getPassword(),
-                viewModel.getEmail(),
-                new HashSet<Role>(),
-                BigDecimal.ZERO);
+        if (userService.findByLogin(viewModel.getLogin()).isPresent()) {
+            var error = new FieldError("viewModel","login", "Given login already exists.");
 
-        userService.RegisterUser(user);
+            bindingResult.addError(error);
 
-        return "/index";
+            return "/account/register";
+        }
+
+        userService.RegisterUser(RegisterViewModel.ToUser(viewModel));
+
+        return "redirect:/account/login";
 
     }
 
@@ -73,53 +69,33 @@ public class AccountController {
 
         var users = userService.getUsers();
 
-        model.addAttribute("users", users);
+        var roles = userService.getRoles();
+
+        var viewModel = new ManageUsersViewModel();
+
+        viewModel.setRoles(roles);
+
+        for (var user : users) {
+            viewModel.addUser(user);
+        }
+
+        model.addAttribute("viewModel", viewModel);
 
         return "/account/manage";
     }
 
-    @GetMapping("/manage/user")
-    public String getManageUser(@RequestParam String name,Model model) {
-
-        //var roles = usersService.getRoles();
-
-        var user = userService.findByLogin(name);
-
-        if (user.isEmpty()) {
-            return "/index";
-        }
-
-        var roles = new HashSet<Role>();
-
-        for (var role : userService.getRoles()) {
-
-            if (user.get().getRoles().stream().anyMatch(x -> x.getName().equals(role.getName()))) {
-                continue;
-            }
-
-            roles.add(role);
-
-        }
-
-        model.addAttribute("roles", roles);
-        model.addAttribute("login", name);
-        model.addAttribute("users_roles", user.get().getRoles().stream().toList());
-
-        return "/account/manage_user";
-    }
-
-    @GetMapping("/manage/user/add")
+    @GetMapping("/manage/add")
     public String getAddRole(@RequestParam String name, @RequestParam Short role, Model model) {
         var user = userService.findByLogin(name);
 
         if (user.isEmpty()) {
-            return "/index";
+            return "redirect:/account/manage";
         }
 
-        var roleToAdd = userService.getRoles().stream().filter(x -> x.getId() == role).findFirst();
+        var roleToAdd = userService.getRoles().stream().filter(x -> Objects.equals(x.getId(), role)).findFirst();
 
         if (roleToAdd.isEmpty()) {
-            return "/index";
+            return "redirect:/account/manage";
         }
 
         var domain = user.get();
@@ -128,21 +104,21 @@ public class AccountController {
 
         userService.UpdateUser(domain);
 
-        return "/index";
+        return "redirect:/account/manage";
     }
 
-    @GetMapping("/manage/user/remove")
+    @GetMapping("/manage/remove")
     public String getRemoveRole(@RequestParam String name, @RequestParam Short role, Model model) {
         var user = userService.findByLogin(name);
 
         if (user.isEmpty()) {
-            return "/index";
+            return "redirect:/account/manage";
         }
 
-        var roleToRemove = userService.getRoles().stream().filter(x -> x.getId() == role).findFirst();
+        var roleToRemove = userService.getRoles().stream().filter(x -> Objects.equals(x.getId(), role)).findFirst();
 
         if (roleToRemove.isEmpty()) {
-            return "/index";
+            return "redirect:/account/manage";
         }
 
         var domain = user.get();
@@ -151,7 +127,7 @@ public class AccountController {
 
         userService.UpdateUser(domain);
 
-        return "/index";
+        return "redirect:/account/manage";
     }
 
     @GetMapping("/profile/index")
@@ -161,13 +137,10 @@ public class AccountController {
         var user = userService.findByLogin(name);
 
         if (user.isEmpty()) {
-            return "/index";
+            return "redirect:/account/register";
         }
 
-        var viewModel = new ProfileViewModel(
-                user.get().getLogin(),
-                user.get().getEmail(),
-                user.get().getPassword());
+        var viewModel = ProfileViewModel.ToView(user.get());
 
         model.addAttribute("viewModel", viewModel);
 
@@ -175,23 +148,31 @@ public class AccountController {
     }
 
     @PostMapping("/profile/index")
-    public String postProfile(@ModelAttribute ProfileViewModel viewModel, Model model) {
-        var findUser = userService.findByLogin(viewModel.getLogin());
+    public String postProfile(@Valid @ModelAttribute("viewModel") ProfileViewModel viewModel, BindingResult bindingResult) {
 
-        if (findUser.isEmpty()) {
-            return "/index";
+        if (bindingResult.hasErrors()) {
+            return "/account/profile";
         }
 
-        var user = new User(
-                viewModel.getLogin(),
-                viewModel.getPassword(),
-                viewModel.getEmail(),
-                findUser.get().getRoles(),
-                findUser.get().getBalance());
+        var user = userService.findByLogin(viewModel.getLogin());
 
-        userService.UpdateUser(user);
+        if (user.isEmpty()) {
+            return "redirect:/account/register";
+        }
 
-        return "/index";
+        if (!user.get().getPassword().equals(viewModel.getPassword())) {
+            var error = new FieldError("viewModel","password", "Password not match with current password.");
+
+            bindingResult.addError(error);
+
+            return "/account/profile";
+        }
+
+        user.get().setEmail(viewModel.getEmail());
+
+        userService.UpdateUser(user.get());
+
+        return "redirect:/account/profile/index";
 
     }
 
@@ -203,7 +184,7 @@ public class AccountController {
         var user = userService.findByLogin(name);
 
         if (user.isEmpty()) {
-            return "/index";
+            return "redirect:/index";
         }
 
         var viewModel = new AddBalanceViewModel();
@@ -214,20 +195,24 @@ public class AccountController {
     }
 
     @PostMapping("/balance")
-    public String getBalance(Authentication authentication, @ModelAttribute AddBalanceViewModel viewModel, Model model) {
+    public String getBalance(Authentication authentication, @Valid @ModelAttribute("viewModel") AddBalanceViewModel viewModel, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return "/account/balance";
+        }
 
         var name = authentication.getName();
 
         var user = userService.findByLogin(name);
 
         if (user.isEmpty()) {
-            return "/index";
+            return "redirect:/index";
         }
 
         userService.ChangeUserBalance(user.get().getLogin(), viewModel.getPositiveBalanceDelta());
 
         userService.UpdateAuthorizeUserData(userService.findByLogin(name).get());
 
-        return "/index";
+        return "redirect:/index";
     }
 }

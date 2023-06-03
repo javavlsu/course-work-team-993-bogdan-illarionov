@@ -29,6 +29,7 @@
           <div class="row">
             <label for="koef">Koef</label>
             <form:input class="form-control" value="${outcome.getKoef()}" type="number" step="0.01" id="koef" path="koef"/>
+            <form:errors path="koef" cssClass="error"/>
           </div>
           <br/>
           <div class="row">

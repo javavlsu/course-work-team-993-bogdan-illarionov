@@ -22,21 +22,25 @@
           <div class="row">
             <label for="loginString">Login</label>
             <form:input class="form-control" type="text" id="loginString" path="login"/>
+            <form:errors path="login" cssClass="error"/>
           </div>
           </br>
           <div class="row">
             <label for="psdString">Password</label>
             <form:input class="form-control" type="text" id="psdString" path="password"/>
+            <form:errors path="password" cssClass="error"/>
           </div>
           <br/>
           <div class="row">
             <label for="repPsdString">Repeat password</label>
             <form:input class="form-control" type="text" id="repPsdString" path="repeatPassword"/>
+            <form:errors path="repeatPassword" cssClass="error"/>
           </div>
           <br/>
           <div class="row">
             <label for="psdString">Email</label>
             <form:input class="form-control" type="text" id="emailString" path="email"/>
+            <form:errors path="email" cssClass="error"/>
           </div>
           <br/>
           <!-- onclick="location.href='/basket/add?itemId=@Model.Item.Key.Value&&providerId=@Model.Provider.Key.Value'" -->

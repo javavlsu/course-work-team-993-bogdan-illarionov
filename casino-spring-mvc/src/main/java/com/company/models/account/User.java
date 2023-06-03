@@ -14,20 +14,11 @@ import java.util.List;
 import java.util.Set;
 
 public class User implements UserDetails {
-
-    public static StorageUser ToStorage(User model)
-    {
-        return new StorageUser(
-                model.id,
-                model.login,
-                model.password,
-                model.email,
-                model.balance,
-                model.roles);
-    }
+    public static final String REGEX_LOGIN = "^[a-zA-Z0-9]*";
+    public static final String REGEX_PASSWORD = "^[a-zA-Z0-9]*";
 
     @Getter
-    private long id;
+    private Long id;
 
     @Getter
     private final String login;
@@ -45,6 +36,16 @@ public class User implements UserDetails {
     @Getter
     @Setter
     private BigDecimal balance;
+
+    public static StorageUser ToStorage(User user) {
+        return new StorageUser(
+                user.id,
+                user.login,
+                user.password,
+                user.email,
+                user.balance,
+                user.roles);
+    }
 
     public User(Long id, String login, String password, String email, Set<Role> roles, BigDecimal balance) {
         this.id = id;

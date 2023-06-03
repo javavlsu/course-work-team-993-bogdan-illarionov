@@ -23,11 +23,13 @@
           <div class="row">
             <label for="loginString">Login</label>
             <form:input class="form-control" type="text" id="loginString" path="username"/>
+            <form:errors path="username" cssClass="error"/>
           </div>
           <br/>
           <div class="row">
             <label for="psdString">Password</label>
             <form:input class="form-control" type="text" id="psdString" path="password"/>
+            <form:errors path="password" cssClass="error"/>
           </div>
           <br/>
           <div class="row">
