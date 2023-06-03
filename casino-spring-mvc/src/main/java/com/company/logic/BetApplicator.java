@@ -27,7 +27,7 @@ public class BetApplicator implements IBetApplicator {
     @Autowired
     private IGamePlayerFactory gamePlayerFactory;
 
-    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ)
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
     @Override
     public IReadOnlyPlayingResult applyBet(Bet bet) {
         var user = userService.findByLogin(bet.getUserLogin());
