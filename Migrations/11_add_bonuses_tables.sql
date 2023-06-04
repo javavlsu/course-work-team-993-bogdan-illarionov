@@ -142,18 +142,18 @@ BEGIN
     INSERT INTO user_bonuses_config(map_id, param_name, param_value, param_type) VALUES
     (NEW.Id, 'is_enabled', 'true', 'boolean');
 
-	IF (cur_trigger_type = 1) THEN -- добавление
-        INSERT INTO user_bonuses_config(map_id, param_name, param_value, param_type) VALUES
-            (NEW.Id, 'bonus_koef', CAST (cur_bonus_koef AS VARCHAR(100)), 'decimal');
-    ELSIF (cur_trigger_type = 2) THEN -- бонус к выигрушу
-        INSERT INTO user_bonuses_config(map_id, param_name, param_value, param_type) VALUES
-            (NEW.Id, 'bonus_koef', CAST (cur_bonus_koef AS VARCHAR(100)), 'decimal');
-        INSERT INTO user_bonuses_config(map_id, param_name, param_value, param_type) VALUES
-            (NEW.Id, 'lots_ids', CAST (cur_lots_ids AS VARCHAR(100)), 'str-array');
-    ELSIF (cur_trigger_type = 3) THEN -- повышенный шанс на выигрыш
-        INSERT INTO user_bonuses_config(map_id, param_name, param_value, param_type) VALUES
-            (NEW.Id, 'lots_ids', CAST (cur_lots_ids AS VARCHAR(100)), 'str-array');
-    END IF;
+	-- IF (cur_trigger_type = 1) THEN -- добавление
+    --     INSERT INTO user_bonuses_config(map_id, param_name, param_value, param_type) VALUES
+    --         (NEW.Id, 'bonus_koef', CAST (cur_bonus_koef AS VARCHAR(100)), 'decimal');
+    -- ELSIF (cur_trigger_type = 2) THEN -- бонус к выигрушу
+    --     INSERT INTO user_bonuses_config(map_id, param_name, param_value, param_type) VALUES
+    --         (NEW.Id, 'bonus_koef', CAST (cur_bonus_koef AS VARCHAR(100)), 'decimal');
+    --     INSERT INTO user_bonuses_config(map_id, param_name, param_value, param_type) VALUES
+    --         (NEW.Id, 'lots_ids', CAST (cur_lots_ids AS VARCHAR(100)), 'str-array');
+    -- ELSIF (cur_trigger_type = 3) THEN -- повышенный шанс на выигрыш
+    --     INSERT INTO user_bonuses_config(map_id, param_name, param_value, param_type) VALUES
+    --         (NEW.Id, 'lots_ids', CAST (cur_lots_ids AS VARCHAR(100)), 'str-array');
+    -- END IF;
 
     IF (cur_expire_type = 1) THEN -- если истекающий тип по колличеству
         INSERT INTO user_bonuses_config(map_id, param_name, param_value, param_type) VALUES
