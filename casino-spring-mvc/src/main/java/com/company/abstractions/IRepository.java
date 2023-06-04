@@ -22,7 +22,7 @@ public interface IRepository<TEntity, TKey> {
      * Добавляет сущность в хранилище.
      * @param entity сущность, которую нужно добавить.
      */
-    public void add(TEntity entity);
+    public TEntity add(TEntity entity);
 
     /**
      * Удаляет сущность из хранилища.

@@ -3,6 +3,7 @@ package com.company.storage;
 import com.company.abstractions.IRepository;
 import com.company.storage.jpa.IBetJpaRepository;
 import com.company.storage.models.StorageBet;
+import com.company.storage.models.bonus.StorageBonus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,8 +26,8 @@ public class BetRepository implements com.company.abstractions.IBetRepository {
     }
 
     @Override
-    public void add(StorageBet storageBet) {
-        betRepository.saveAndFlush(storageBet);
+    public StorageBet add(StorageBet storageBet) {
+        return betRepository.saveAndFlush(storageBet);
     }
 
     @Override

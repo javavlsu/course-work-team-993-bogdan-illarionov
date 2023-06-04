@@ -22,8 +22,8 @@ public class OutcomesRepository implements IRepository<StorageOutcome, Long> {
     }
 
     @Override
-    public void add(StorageOutcome storageOutcome) {
-        outcomesRepository.saveAndFlush(storageOutcome);
+    public StorageOutcome add(StorageOutcome storageOutcome) {
+        return outcomesRepository.saveAndFlush(storageOutcome);
     }
 
     @Override

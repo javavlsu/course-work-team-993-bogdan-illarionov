@@ -30,8 +30,8 @@ public class UserRepository implements IUserRepository {
     }
 
     @Override
-    public void add(StorageUser storageUser) {
-        userRepository.saveAndFlush(storageUser);
+    public StorageUser add(StorageUser storageUser) {
+        return userRepository.saveAndFlush(storageUser);
     }
 
     @Override

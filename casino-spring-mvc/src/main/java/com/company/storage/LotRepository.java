@@ -3,6 +3,7 @@ package com.company.storage;
 import com.company.abstractions.IRepository;
 import com.company.storage.jpa.ILotJpaRepository;
 import com.company.storage.models.StorageLot;
+import com.company.storage.models.bonus.StorageBonus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,8 +24,8 @@ public class LotRepository implements IRepository<StorageLot, Long> {
     }
 
     @Override
-    public void add(StorageLot lot) {
-        lotRepository.saveAndFlush(lot);
+    public StorageLot add(StorageLot lot) {
+        return lotRepository.saveAndFlush(lot);
     }
 
     @Override
