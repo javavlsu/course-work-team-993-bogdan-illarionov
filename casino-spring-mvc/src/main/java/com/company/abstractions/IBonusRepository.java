@@ -6,5 +6,7 @@ import com.company.storage.models.bonus.StorageUserBonus;
 import java.util.Set;
 
 public interface IBonusRepository extends IRepository<StorageBonus, Long> {
-    public Set<StorageUserBonus> getUsersBonuses(Long userId);
+    Set<StorageUserBonus> getUsersBonuses(Long userId);
+
+    void updateUserBonusConfig(StorageUserBonus storageUserBonus);
 }
