@@ -43,7 +43,7 @@ CREATE TABLE bonuses (
 CREATE TABLE bonus_config(
     bonus_id BIGINT NOT NULL PRIMARY KEY,
     trigger_count INT NULL,
-    to_term TIMESTAMP NULL,
+    to_term INTERVAL NULL,
     lots_ids VARCHAR(80) NULL,
     bonus_koef DECIMAL(10,2) NULL,
     FOREIGN KEY (bonus_id) REFERENCES bonuses(id) ON DELETE CASCADE
@@ -55,7 +55,7 @@ AS
 $trg$
 DECLARE
     new_trigger_count INT := NULL;
-    new_to_term TIMESTAMP := NULL;
+    new_to_term INTERVAL := NULL;
     new_lots_ids VARCHAR := NULL;
     new_bonus_koef DECIMAL(10,2) := NULL;
 BEGIN
@@ -71,7 +71,7 @@ BEGIN
     IF (NEW.expire_type_id = 1) THEN -- если истекающий тип по колличеству
         new_trigger_count := 0;
     ELSIF (NEW.expire_type_id = 2) THEN -- если истекает по сроку
-        new_to_term := NOW() - interval '1 day';
+        new_to_term := interval '1 day';
     END IF;
 
     INSERT INTO bonus_config(bonus_id, trigger_count, to_term, lots_ids, bonus_koef)
@@ -116,7 +116,7 @@ DECLARE
     cur_expire_type SMALLINT;
     cur_trigger_type SMALLINT;
     cur_trigger_count INT;
-    cur_to_term TIMESTAMP;
+    cur_to_term INTERVAL;
     cur_lots_ids VARCHAR ;
     cur_bonus_koef DECIMAL(10,2);
 BEGIN
@@ -160,7 +160,7 @@ BEGIN
             (NEW.Id, 'trigger_count', CAST (cur_trigger_count AS VARCHAR(100)), 'int');
     ELSIF (cur_expire_type = 2) THEN -- если истекает по сроку
         INSERT INTO user_bonuses_config(map_id, param_name, param_value, param_type) VALUES
-            (NEW.Id, 'to_term', CAST (cur_to_term AS VARCHAR(100)), 'timestamp');
+            (NEW.Id, 'to_term', CAST (NOW() + cur_to_term AS VARCHAR(100)), 'timestamp');
     END IF;
 
 	RETURN NEW;
