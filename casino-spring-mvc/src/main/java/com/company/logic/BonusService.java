@@ -48,23 +48,8 @@ public class BonusService implements IBonusService {
     }
 
     @Override
-    public List<StorageBonus> getBonusesForUser(User user) {
+    public List<StorageUserBonus> getBonusesForUser(User user) {
 
-        var bonuses = repository.getUsersBonuses(user.getId());
-
-        var list = new ArrayList<StorageBonus>();
-
-        bonuses.forEach(x -> {
-            var optionalBonus = repository.getById(x.getBonusId());
-
-            optionalBonus.ifPresent(list::add);
-        });
-
-        return list;
-    }
-
-    @Override
-    public List<StorageUserBonus> getDetailBonusesForUser(User user) {
         return repository
                 .getUsersBonuses(user.getId())
                 .stream()

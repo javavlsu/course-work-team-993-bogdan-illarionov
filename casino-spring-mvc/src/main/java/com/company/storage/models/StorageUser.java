@@ -2,9 +2,11 @@ package com.company.storage.models;
 
 import com.company.models.account.Role;
 import com.company.models.account.User;
+import com.company.storage.models.bonus.StorageUserBonus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Set;
@@ -13,6 +15,7 @@ import java.util.Set;
 @Table(name = "users")
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class StorageUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,10 +46,6 @@ public class StorageUser {
         }
 
         return new User(storageUser.id, storageUser.login, storageUser.password, storageUser.email, storageUser.roles, storageUser.balance);
-    }
-
-    public StorageUser() {
-
     }
 
     //todo [0-100%]

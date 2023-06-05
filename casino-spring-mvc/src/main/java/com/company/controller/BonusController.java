@@ -2,11 +2,14 @@ package com.company.controller;
 
 import com.company.abstractions.IBonusService;
 import com.company.abstractions.IUserService;
+import com.company.models.account.User;
 import com.company.models.view.BetViewModel;
 import com.company.models.view.bonus.CreateBonusViewModel;
 import com.company.models.view.bonus.EditBonusViewModel;
+import com.company.models.view.bonus.SetupUserBonusViewModel;
 import com.company.storage.models.bonus.StorageBonus;
 import com.company.storage.models.bonus.StorageBonusConfig;
+import com.company.storage.models.bonus.StorageUserBonus;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -15,8 +18,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/bonus")
@@ -160,47 +163,72 @@ public class BonusController {
     }
 
     @GetMapping("/users")
-    public String getUsers() {
+    public String getUsers(Model model) {
 
+        var viewModel = new SetupUserBonusViewModel();
 
+        prepareSetupUserBonusModels(model);
+
+        model.addAttribute("viewModel", viewModel);
 
         return "/bonus/users";
     }
 
-    @GetMapping("/users/{userId}")
-    public String getUser() {
+    @PostMapping("/users")
+    public String postSetup(
+            @ModelAttribute("viewModel") @Valid SetupUserBonusViewModel viewModel,
+            BindingResult bindingResult,
+            Model model) {
 
+        if (bindingResult.hasErrors()) {
+            prepareSetupUserBonusModels(model);
 
+            return "/bonus/users";
+        }
 
-        return "/bonus/user";
-    }
+        var userBonus = new StorageUserBonus();
+        userBonus.setBonusId(viewModel.getBonusId());
+        userBonus.setUserId(viewModel.getUserId());
 
-    @GetMapping("/users/setup")
-    public String getSetup() {
+        var optionalUser = userService.getById(viewModel.getUserId());
+        var optionalBonus = bonusService.getById(viewModel.getBonusId());
 
-        // viewModel
+        if (optionalUser.isEmpty() || optionalBonus.isEmpty()) {
+            return "redirect:/bonus/users";
+        }
 
-        return "/bonus/setup";
-    }
-
-    @PostMapping("/users/setup")
-    public String postSetup() {
+        bonusService.addBonusToUser(optionalBonus.get(), optionalUser.get());
 
         return "redirect:/bonus/users";
     }
 
-    @GetMapping("/users/edit")
-    public String getUserEdit() {
+    @GetMapping("/users/{userId}/enable/{bonusId}")
+    public String getUserEnable(@PathVariable Long userId, @PathVariable Long bonusId, Model model) {
 
-        // viewModel
+        var optionalUser = userService.getById(userId);
+        var optionalBonus = bonusService.getById(bonusId);
 
-        return "/bonus/edit";
-    }
+        if (optionalUser.isEmpty() || optionalBonus.isEmpty()) {
+            return "redirect:/bonus/users";
+        }
 
-    @PostMapping("/users/edit")
-    public String postUserEdit(Model model) {
+        var bonus = bonusService.getBonusesForUser(optionalUser.get()).stream().filter(x -> x.getBonusId().equals(bonusId)).findFirst();
 
-        return "redirect:/bonus/users/{id}";
+        if (bonus.isEmpty()) {
+            return "redirect:/bonus/users";
+        }
+
+        var param = bonus.get().getConfig().stream().filter(x -> x.getName().equals("is_enabled")).findFirst();
+
+        if (param.isEmpty()) {
+            return "redirect:/bonus/users";
+        }
+
+        param.get().setValue(param.get().getValue().equals("true") ? "false" : "true");
+
+        bonusService.changeBonusOfUser(bonus.get());
+
+        return "redirect:/bonus/users";
     }
 
     private void prepareCreateBonusModels(Model model) {
@@ -218,6 +246,33 @@ public class BonusController {
 
         model.addAttribute("expireMap", expireMap);
         model.addAttribute("triggerMap", triggerMap);
+    }
 
+    private void prepareSetupUserBonusModels(Model model) {
+
+        var users = userService.getUsers();
+
+        var bonuses = bonusService.getBonuses();
+
+        Map<Long, String> usersMap = users.stream().collect(Collectors.toMap(User::getId, User::getLogin));
+        Map<Long, String> bonusMap = bonuses.stream().collect(Collectors.toMap(StorageBonus::getId, StorageBonus::getName));
+
+        Map<String, List<StorageUserBonus>> usersBonusMap = new HashMap<>();
+
+        var arr = new ArrayList<String>();
+
+        for (var user : users) {
+            var bonues = bonusService.getBonusesForUser(user);
+
+            if (bonues.size() == 0) {
+                continue;
+            }
+
+            usersBonusMap.put(user.getLogin(), bonues);
+        }
+
+        model.addAttribute("usersMap", usersMap);
+        model.addAttribute("bonusMap", bonusMap);
+        model.addAttribute("usersBonusMap", usersBonusMap);
     }
 }

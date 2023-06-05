@@ -96,5 +96,7 @@ public class LotsController {
         if (newViewModel) {
             model.addAttribute("viewModel", new BetViewModel());
         }
+
+
     }
 }

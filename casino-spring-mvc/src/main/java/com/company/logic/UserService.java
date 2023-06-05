@@ -36,6 +36,13 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public Optional<User> getById(Long id) {
+        var user = userRepository.getById(id);
+
+        return Optional.ofNullable(StorageUser.toModel(user.orElse(null)));
+    }
+
+    @Override
     public List<Role> getRoles() {
         return userRepository.getRoles();
     }
