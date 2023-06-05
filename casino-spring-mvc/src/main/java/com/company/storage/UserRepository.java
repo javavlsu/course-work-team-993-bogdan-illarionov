@@ -25,13 +25,13 @@ public class UserRepository implements IUserRepository {
     }
 
     @Override
-    public StorageUser getById(Long id) {
-        return userRepository.findById(id).get();
+    public Optional<StorageUser> getById(Long id) {
+        return userRepository.findById(id);
     }
 
     @Override
-    public StorageUser add(StorageUser storageUser) {
-        return userRepository.saveAndFlush(storageUser);
+    public void add(StorageUser storageUser) {
+        userRepository.saveAndFlush(storageUser);
     }
 
     @Override

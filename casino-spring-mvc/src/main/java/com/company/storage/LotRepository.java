@@ -7,6 +7,8 @@ import com.company.storage.models.bonus.StorageBonus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class LotRepository implements IRepository<StorageLot, Long> {
 
@@ -19,13 +21,13 @@ public class LotRepository implements IRepository<StorageLot, Long> {
     }
 
     @Override
-    public StorageLot getById(Long id) {
-        return lotRepository.findById(id).get();
+    public Optional<StorageLot> getById(Long id) {
+        return lotRepository.findById(id);
     }
 
     @Override
-    public StorageLot add(StorageLot lot) {
-        return lotRepository.saveAndFlush(lot);
+    public void add(StorageLot lot) {
+        lotRepository.saveAndFlush(lot);
     }
 
     @Override

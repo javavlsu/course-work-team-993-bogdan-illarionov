@@ -6,6 +6,8 @@ import com.company.storage.models.StorageOutcome;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class OutcomesRepository implements IRepository<StorageOutcome, Long> {
     @Autowired
@@ -17,13 +19,13 @@ public class OutcomesRepository implements IRepository<StorageOutcome, Long> {
     }
 
     @Override
-    public StorageOutcome getById(Long id) {
-        return outcomesRepository.findById(id).get();
+    public Optional<StorageOutcome> getById(Long id) {
+        return outcomesRepository.findById(id);
     }
 
     @Override
-    public StorageOutcome add(StorageOutcome storageOutcome) {
-        return outcomesRepository.saveAndFlush(storageOutcome);
+    public void add(StorageOutcome storageOutcome) {
+        outcomesRepository.saveAndFlush(storageOutcome);
     }
 
     @Override

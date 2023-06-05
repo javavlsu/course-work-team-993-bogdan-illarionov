@@ -54,7 +54,7 @@ public class ManageLotsController {
     public String getManageLot(@PathVariable Long lotId, Model model) {
         model.addAttribute(
                 "outcomes",
-                lotsRepo.getById(lotId).getOutcomes()
+                lotsRepo.getById(lotId).get().getOutcomes()
                         .stream()
                         .sorted((a1,b1) -> Long.compare(a1.getId(),b1.getId()))
                         .toList());
@@ -83,8 +83,8 @@ public class ManageLotsController {
             return getLots(model); //Todo
 
         var outcome = outcomesRepo.getById(outcomeId);
-        outcome.setKoef(viewModel.getKoef());
-        outcomesRepo.update(outcome);
+        outcome.get().setKoef(viewModel.getKoef());
+        outcomesRepo.update(outcome.get());
 
         return getLots(model);
     }
