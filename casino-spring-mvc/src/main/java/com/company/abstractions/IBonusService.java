@@ -6,10 +6,13 @@ import com.company.storage.models.bonus.StorageBonus;
 import com.company.storage.models.bonus.StorageUserBonus;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IBonusService {
 
     List<StorageBonus> getBonuses();
+
+    Optional<StorageBonus> getById(Long id);
 
     void createBonus(StorageBonus bonus);
 
