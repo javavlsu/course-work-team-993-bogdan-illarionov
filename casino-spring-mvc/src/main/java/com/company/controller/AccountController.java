@@ -1,9 +1,11 @@
 package com.company.controller;
 
-import com.company.models.account.Role;
-import com.company.models.account.User;
+import com.company.abstractions.IBonusService;
+import com.company.abstractions.IUserService;
 import com.company.models.view.*;
-import com.company.logic.UserService;
+import com.company.storage.models.bonus.StorageBonus;
+import com.company.storage.models.bonus.StorageUserBonus;
+import com.company.storage.models.bonus.StorageUserBonusConfig;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -14,7 +16,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Objects;
 
 @Controller
@@ -22,7 +24,10 @@ import java.util.Objects;
 public class AccountController {
 
     @Autowired
-    private UserService userService;
+    private IUserService userService;
+
+    @Autowired
+    private IBonusService bonusService;
 
     @GetMapping("/login")
     public String getLogin(Model model) {
@@ -209,7 +214,55 @@ public class AccountController {
             return "redirect:/index";
         }
 
-        userService.ChangeUserBalance(user.get().getLogin(), viewModel.getPositiveBalanceDelta());
+        bonusService.syncBonuses(user.get());
+
+        var bonuses = bonusService.getBonuses();
+
+        var bonusesUser = bonusService.getBonusesForUser(user.get());
+
+        var bonusKoef = BigDecimal.ONE;
+
+        var userBonuses = new ArrayList<StorageUserBonus>();
+
+        for (var userBonus : bonusesUser) {
+
+            if (userBonus.getConfig()
+                    .stream()
+                    .filter(x -> x.getName().equals(StorageUserBonusConfig.IS_ENABLED_PARAM_NAME))
+                    .findAny().get().getValue().equals("false")) {
+                continue;
+            }
+
+            var bonus = bonuses.stream().filter(x -> x.getId().equals(userBonus.getBonusId())).findFirst();
+
+            if (bonus.isEmpty() || !bonus.get().getIsEnabled()) {
+                continue;
+            }
+
+            if (bonus.get().getTriggerActionId().equals(StorageBonus.BALANCE_ADD_ACTION_ID)) {
+                bonusKoef = bonusKoef.multiply(bonus.get().getConfig().getBonusKoef());
+
+                userBonuses.add(userBonus);
+            }
+
+        }
+
+        userService.ChangeUserBalance(user.get().getLogin(), viewModel.getPositiveBalanceDelta().multiply(bonusKoef));
+
+        for (var userBonus : userBonuses) {
+            var countParam = userBonus.getConfig()
+                    .stream()
+                    .filter(x -> x.getName().equals(StorageUserBonusConfig.COUNT_PARAM_NAME))
+                    .findAny();
+
+            if (countParam.isEmpty()) {
+                continue;
+            }
+
+            countParam.get().setValue(Integer.toString(Integer.parseInt(countParam.get().getValue()) - 1));
+
+            bonusService.changeBonusOfUser(userBonus);
+        }
 
         userService.UpdateAuthorizeUserData(userService.findByLogin(name).get());
 

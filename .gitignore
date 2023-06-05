@@ -1,3 +1,4 @@
 /casino-spring-mvc/target/
 /.vscode/
 /.idea/
+/java-casino-postgres-db.session.sql

@@ -10,6 +10,7 @@ import com.company.models.view.bonus.SetupUserBonusViewModel;
 import com.company.storage.models.bonus.StorageBonus;
 import com.company.storage.models.bonus.StorageBonusConfig;
 import com.company.storage.models.bonus.StorageUserBonus;
+import com.company.storage.models.bonus.StorageUserBonusConfig;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -167,6 +168,10 @@ public class BonusController {
 
         var viewModel = new SetupUserBonusViewModel();
 
+        for (var user : userService.getUsers()) {
+            bonusService.syncBonuses(user);
+        }
+
         prepareSetupUserBonusModels(model);
 
         model.addAttribute("viewModel", viewModel);
@@ -218,7 +223,7 @@ public class BonusController {
             return "redirect:/bonus/users";
         }
 
-        var param = bonus.get().getConfig().stream().filter(x -> x.getName().equals("is_enabled")).findFirst();
+        var param = bonus.get().getConfig().stream().filter(x -> x.getName().equals(StorageUserBonusConfig.IS_ENABLED_PARAM_NAME)).findFirst();
 
         if (param.isEmpty()) {
             return "redirect:/bonus/users";

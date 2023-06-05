@@ -15,6 +15,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StorageUserBonusConfig {
 
+    public static String IS_ENABLED_PARAM_NAME = "is_enabled";
+    public static String COUNT_PARAM_NAME = "trigger_count";
+    public static String TERM_PARAM_NAME = "to_term";
+
     @Column(name = "map_id")
     @Id
     private Long mapId;
