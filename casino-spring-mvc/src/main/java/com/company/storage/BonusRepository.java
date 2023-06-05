@@ -1,6 +1,7 @@
 package com.company.storage;
 
 import com.company.abstractions.IBonusRepository;
+import com.company.models.account.User;
 import com.company.storage.jpa.bonus.IBonusConfigJpaRepository;
 import com.company.storage.jpa.bonus.IBonusJpaRepository;
 import com.company.storage.jpa.bonus.IUserBonusJpaRepository;
@@ -10,7 +11,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class BonusRepository implements IBonusRepository {
@@ -30,13 +31,20 @@ public class BonusRepository implements IBonusRepository {
     }
 
     @Override
-    public StorageBonus getById(Long id) {
-        return null;
+    public Optional<StorageBonus> getById(Long id) {
+        return bonusRepository.findById(id);
     }
 
     @Override
     public void add(StorageBonus storageBonus) {
-        bonusRepository.saveAndFlush(storageBonus);
+        var config = storageBonus.getConfig();
+        storageBonus.setConfig(null);
+
+        storageBonus = bonusRepository.saveAndFlush(storageBonus);
+
+        storageBonus.setConfig(config);
+
+        updateBonusConfig(storageBonus);
     }
 
     @Override
@@ -47,6 +55,7 @@ public class BonusRepository implements IBonusRepository {
     @Override
     public void update(StorageBonus storageBonus) {
         bonusRepository.saveAndFlush(storageBonus);
+        bonusConfigRepository.saveAndFlush(storageBonus.getConfig());
     }
 
     @Override
@@ -60,5 +69,48 @@ public class BonusRepository implements IBonusRepository {
         for (var param : storageUserBonus.getConfig()) {
             userBonusRepository.updateConfig(param.getMapId(), param.getName(), param.getValue());
         }
+    }
+
+    @Override
+    public void updateBonusConfig(StorageBonus bonus) {
+        var newConfig = bonus.getConfig();
+
+        var optional = bonusConfigRepository.findById(bonus.getId());
+
+        if (optional.isEmpty()) {
+            return;
+        }
+
+        var oldConfig = optional.get();
+
+        switch (bonus.getTriggerActionId()) {
+            case StorageBonus.BALANCE_ADD_ACTION_ID -> oldConfig.setBonusKoef(newConfig.getBonusKoef());
+            case StorageBonus.LOT_WIN_ACTION_ID -> {
+                oldConfig.setBonusKoef(newConfig.getBonusKoef());
+                oldConfig.setLotsId(newConfig.getLotsId());
+            }
+            case StorageBonus.LOT_PLAY_ACTION_ID -> oldConfig.setLotsId(newConfig.getLotsId());
+            default -> {
+            }
+        }
+
+        switch (bonus.getExpireTypeId()) {
+            case StorageBonus.COUNT_EXPIRE_TYPE_ID -> oldConfig.setTriggerCount(newConfig.getTriggerCount());
+            case StorageBonus.TERM_EXPIRE_TYPE_ID -> oldConfig.setToTerm(newConfig.getToTerm());
+            default -> {
+            }
+        }
+
+        bonusConfigRepository.saveAndFlush(oldConfig);
+
+    }
+
+    @Override
+    public void addBonusToUser(StorageBonus bonus, User user) {
+        var newBonus = new StorageUserBonus();
+        newBonus.setBonusId(bonus.getId());
+        newBonus.setUserId(user.getId());
+
+        userBonusRepository.saveAndFlush(newBonus);
     }
 }
