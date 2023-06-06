@@ -50,6 +50,11 @@ public class LotsController {
 
     @GetMapping("lots/{lotId}")
     public String getLot(@PathVariable Long lotId, Model model) {
+
+        if (lotsRepo.getById(lotId).isEmpty()) {
+            return "redirect:/lots";
+        }
+
         prepareModelLot(model, lotId, true);
 
         return "/gaming/lot";
@@ -90,7 +95,7 @@ public class LotsController {
             outcomesMap.put(outcome.getId(), outcome.getValue());
         }
 
-        model.addAttribute("lot", lot);
+        model.addAttribute("lot", lot.get());
         model.addAttribute("outcomesMap", outcomesMap);
 
         if (newViewModel) {

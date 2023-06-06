@@ -8,6 +8,7 @@
 <spring:url value="/account/manage" var="manageUsersLink" />
 <spring:url value="/lots/manage" var="manageLotLink" />
 <spring:url value="/bets" var="myBetsLink" />
+<spring:url value="/bonus/index" var="bonusesLink" />
 
 <header>
   <nav
@@ -50,6 +51,11 @@
           <sec:authorize access="hasAnyAuthority('Admin')">
               <li class="nav-item">
                 <a class="nav-link text-dark" href="${manageLotLink}">Manage Lots</a>
+              </li>
+          </sec:authorize>
+          <sec:authorize access="hasAnyAuthority('Admin')">
+              <li class="nav-item">
+                <a class="nav-link text-dark" href="${bonusesLink}">Bonuses</a>
               </li>
           </sec:authorize>
           <sec:authorize access="hasAnyAuthority('Player')">

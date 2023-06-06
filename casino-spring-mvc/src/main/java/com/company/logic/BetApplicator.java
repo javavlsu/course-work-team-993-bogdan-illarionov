@@ -7,6 +7,7 @@ import com.company.models.casino.BetStatus;
 import com.company.models.casino.PlayingResult;
 import com.company.storage.models.StorageBet;
 import com.company.storage.models.StorageGameOutcome;
+import com.company.storage.models.StorageLot;
 import com.company.storage.models.StorageOutcome;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,9 @@ public class BetApplicator implements IBetApplicator {
     private IRepository<StorageOutcome, Long> outcomeRepository;
     @Autowired
     private IGamePlayerFactory gamePlayerFactory;
+
+    @Autowired
+    private IRepository<StorageLot, Long> lotRepository;
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
     @Override
@@ -96,10 +100,14 @@ public class BetApplicator implements IBetApplicator {
         try{
             var player = gamePlayerFactory.createGamePlayer(bet.getUser(), bet.getOutcome());
 
-            return player.playGame(bet.getOutcome()
-                    .getLot()
-                    .getGameOutcomes().stream()
-                    .toList());
+            var lot = lotRepository.getById(bet.getOutcome().getLot().getId()).get();
+
+            var outcomes = lot
+                    .getGameOutcomes()
+                    .stream()
+                    .toList();
+
+            return player.playGame(outcomes);
         }catch (RuntimeException ex){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             throw ex;

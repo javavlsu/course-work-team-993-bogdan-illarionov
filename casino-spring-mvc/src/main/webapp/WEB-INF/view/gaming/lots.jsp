@@ -12,9 +12,12 @@
   <body>
     <jsp:include page="../shared/_nav.jsp" />
     <main class="content">
-        <h1 align="center">Choose any lot now!</h1>
-
-        <form:form method="POST" class="col">
+        <div class="row">
+          <div class="col-md-3">
+            <h1 align="left">Choose any lot now!</h1>
+          </div>
+        </div>
+        <!-- <form:form method="POST" class="col">
               <div class="row">
                 <div class="col-md-5 form-group">
                   <label for="searchString">Search</label>
@@ -24,7 +27,7 @@
                   <button id="searchSubmit" type="submit" class="w-70 btn btn-dark">Поиск</button>
                 </div>
               </div>
-        </form:form>
+        </form:form> -->
         <br/>
         <div class="row">
 
@@ -37,7 +40,7 @@
                     >
                       <img
                         class="small-title-image"
-                        src="https://www.scoopearth.com/wp-content/uploads/2022/04/photo-1592398191627-25b41eeaa398.jpg"
+                        src="${lot.link}"
                         alt="casino image"
                       />
                       <h2><c:out value="${lot.getName()}" /></h2>

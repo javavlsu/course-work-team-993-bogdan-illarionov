@@ -11,7 +11,17 @@
     <jsp:include page="../shared/_nav.jsp" />
     
     <main class="content">
-        <h1>Manage users!</h1>
+        
+        <spring:url value="/bonus/users" var="bonusesLink" />
+        <div class="row" style = "border-bottom: 2px solid black;">
+            <div class="col-md-2">
+                <h1>Manage users!</h1>
+            </div>
+            <div class="col-md-2">
+                <a href="${bonusesLink}" class = "link text-info"><h1>View Bonuses!</h2></a>
+            </div>
+        </div>
+        <br/>
         <c:forEach items="${viewModel.usersRoles}" var="user">
             <div class="row">
                 <div class="col-md-1">

@@ -15,49 +15,62 @@
     <main class="content">
       <h1><c:out value="Welcome to ${lot.getName()}!" /></h1>
       <div class="row">
-        <img
-          class="small-title-image"
-          src="https://www.scoopearth.com/wp-content/uploads/2022/04/photo-1592398191627-25b41eeaa398.jpg"
-          alt="casino image"
-        />
-        <div class="col-md-4">
+        <div class="col-md-5">
+          <div class="row">
+            <img
+              class="small-title-image"
+              src="${lot.link}"
+              alt="casino image"
+            />
+          </div>
+          <div class="row" style = "border-top: 1px solid black; margin-top: 10px;">
+            <br/>
+          </div>
+          <div class="row form-group">
+            <div class="col-md-1"></div>
+            <form:form method="POST" class="row" modelAttribute="viewModel">
+
+              <div class="col-md-3">
+                <form:input class="form-control" type="number" step="0.01" id="sizeOfBet" path = "betSize"/>
+                <form:errors path="betSize" cssClass="error"/>
+              </div>
+              <div class="col-md-5">
+                <form:select path="outcomeId">
+                    <form:option value="0" label="Выберите исход"/>
+                    <form:options items="${outcomesMap}" />
+                </form:select>
+              </div>
+              <div class="col-md-1">
+                <sec:authorize access="hasAnyAuthority('Player')">
+                  <div class="row">
+                    <form:button type="submit" class="btn btn-primary">Bet</form:button>
+                  </div>
+                </sec:authorize>
+              </div>
+            </form:form>
+          </div>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-5">
+          <div class="row h-25">
+            <div class="col text-info"><h2><c:out value="${lot.getDescription()}" /></h2></div>
+          </div>
+          <div class="row" style = "border-bottom: 1px solid black;">
             <c:if test="${gameResult != null}">
-                <c:if test="${gameWin == true}">
-                    <h3 align="center"><c:out value="Congratulations!" /></h3>
-                </c:if>
-                <c:if test="${gameWin == false}">
-                    <h3 align="center"><c:out value="Very sorry. Next time you will definitely be lucky!" /></h3>
-                </c:if>
-                <h3 align="center"><c:out value="Game result is: ${gameResult}!" /></h3>
-            </c:if>
-
+              <c:if test="${gameWin == true}">
+                  <h3 align="center"><c:out value="Congratulations!" /></h3>
+              </c:if>
+              <c:if test="${gameWin == false}">
+                  <h3 align="center"><c:out value="Very sorry. Next time you will definitely be lucky!" /></h3>
+              </c:if>
+              <h3 align="center"><c:out value="Game result is: ${gameResult}!" /></h3>
+          </c:if>
+          </div>
         </div>
       </div>
 
-      <div class="row form-group">
-        <form:form method="POST" class="row" modelAttribute="viewModel">
-        <div class="col-md-4">
-          <form:input class="form-control" type="number" step="0.01" id="sizeOfBet" path = "betSize"/>
-          <form:errors path="betSize" cssClass="error"/>
-        </div>
-        <div class="col-md-4">
-          <form:select path="outcomeId">
-              <form:option value="0" label="Выберите исход"/>
-              <form:options items="${outcomesMap}" />
-          </form:select>
-        </div>
-        <div class="col-md-4">
-          <sec:authorize access="hasAnyAuthority('Player')">
-            <div class="row">
-              <form:button type="submit" class="btn btn-primary">Bet</form:button>
-            </div>
-          </sec:authorize>
-        </div>
-        </form:form>
-      </div>
-      <div class="row h-25">
-        <div class="col bg-info"><c:out value="${lot.getDescription()}" /></div>
-      </div>
+     
+      
     </main>
   </body>
 </html>
