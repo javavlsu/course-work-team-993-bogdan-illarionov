@@ -45,9 +45,15 @@ public class BetApplicator implements IBetApplicator {
 
         var outcome = outcomeRepository.getById(bet.getOutcomeId());
 
+        if (outcome.isEmpty())
+        {
+            return null;
+        }
+
+
         var storageBet = new StorageBet(
                 User.ToStorage(user.get()),
-                outcome,
+                outcome.get(),
                 bet.getPrice(),
                 bet.getStatus());
 

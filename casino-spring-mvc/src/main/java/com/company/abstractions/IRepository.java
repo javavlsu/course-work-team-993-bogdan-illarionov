@@ -1,5 +1,7 @@
 package com.company.abstractions;
 
+import java.util.Optional;
+
 /**
  * Описывает репозиторий сущностей.
  * @param <TEntity> тип сущности.
@@ -16,7 +18,7 @@ public interface IRepository<TEntity, TKey> {
      * Возвращет сушность по её идентификатору.
      * @return Сущность типа {@link TEntity}
      */
-    public TEntity getById(TKey id);
+    public Optional<TEntity> getById(TKey id);
 
     /**
      * Добавляет сущность в хранилище.

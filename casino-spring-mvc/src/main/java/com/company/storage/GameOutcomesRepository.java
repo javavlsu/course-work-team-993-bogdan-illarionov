@@ -6,6 +6,8 @@ import com.company.storage.models.StorageGameOutcome;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class GameOutcomesRepository implements IRepository<StorageGameOutcome, Long> {
     @Autowired
@@ -17,8 +19,8 @@ public class GameOutcomesRepository implements IRepository<StorageGameOutcome, L
     }
 
     @Override
-    public StorageGameOutcome getById(Long id) {
-        return gameOutcomesRepository.findById(id).get();
+    public Optional<StorageGameOutcome> getById(Long id) {
+        return gameOutcomesRepository.findById(id);
     }
 
     @Override

@@ -10,6 +10,8 @@ import java.util.Optional;
 public interface IUserService {
     Optional<User> findByLogin(String login);
 
+    Optional<User> getById(Long id);
+
     List<Role> getRoles();
 
     List<User> getUsers();

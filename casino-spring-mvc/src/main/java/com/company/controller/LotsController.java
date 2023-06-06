@@ -86,7 +86,7 @@ public class LotsController {
         var lot = lotsRepo.getById(lotId);
         Map<Long, String> outcomesMap = new HashMap<Long, String>();
         for (var outcome:
-                lot.getOutcomes()) {
+                lot.get().getOutcomes()) {
             outcomesMap.put(outcome.getId(), outcome.getValue());
         }
 
@@ -96,5 +96,7 @@ public class LotsController {
         if (newViewModel) {
             model.addAttribute("viewModel", new BetViewModel());
         }
+
+
     }
 }
