@@ -28,6 +28,6 @@ public class BetService implements IBetService {
             return Collections.emptySet();
         }
 
-        return betRepository.GetBetsByUserId(user.get().getId());
+        return betRepository.getBetsByUserId(user.get().getId());
     }
 }
