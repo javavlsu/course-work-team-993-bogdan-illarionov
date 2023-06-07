@@ -1,5 +1,7 @@
 package com.company.models.view.bonus;
 
+import com.company.annotations.NotNullBonusFieldForExpireType;
+import com.company.annotations.NotNullBonusFieldForTriggerAction;
 import com.company.storage.models.bonus.StorageBonus;
 import com.company.storage.models.bonus.StorageBonusConfig;
 import jakarta.annotation.Nullable;
@@ -8,16 +10,50 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.validation.FieldError;
 
 import java.math.BigDecimal;
 import java.time.Duration;
-import java.util.Arrays;
+import java.util.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@NotNullBonusFieldForTriggerAction(fieldName = "triggerActionTypeId")
+@NotNullBonusFieldForExpireType(fieldName = "expireTypeId")
 public class CreateBonusViewModel {
+
+    public static Map<Short, List<String>> getFieldsForExpire() {
+        return new HashMap<>(){{
+            put(StorageBonus.COUNT_EXPIRE_TYPE_ID,
+                    new ArrayList<>() {{
+                        add("triggerCount");
+            }});
+            put(StorageBonus.TERM_EXPIRE_TYPE_ID,
+                    new ArrayList<>() {{
+                        add("toTerm");
+                    }});
+            put(StorageBonus.UNLIMITED_EXPIRE_TYPE_ID,
+                    Collections.<String> emptyList());
+        }};
+    }
+
+    public static Map<Short, List<String>> getFieldsForAction() {
+        return new HashMap<>(){{
+            put(StorageBonus.BALANCE_ADD_ACTION_ID,
+                    new ArrayList<>() {{
+                        add("bonusKoef");
+                    }});
+            put(StorageBonus.LOT_WIN_ACTION_ID,
+                    new ArrayList<>() {{
+                        add("lotsIds");
+                        add("bonusKoef");
+                    }});
+            put(StorageBonus.LOT_PLAY_ACTION_ID,
+                    new ArrayList<>() {{
+                        add("lotsIds");
+                    }});
+        }};
+    }
 
     @NotBlank(message = "Shouldn't be blank.")
     @Length(min = 4, max = 49, message = "Not match with length constraint.")

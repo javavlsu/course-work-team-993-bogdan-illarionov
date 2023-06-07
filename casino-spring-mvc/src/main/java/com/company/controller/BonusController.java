@@ -1,12 +1,14 @@
 package com.company.controller;
 
-import com.company.abstractions.IBonusRepository;
+import com.company.abstractions.storage.IBonusRepository;
 import com.company.abstractions.IBonusService;
-import com.company.abstractions.IUserRepository;
+import com.company.abstractions.storage.IUserRepository;
+import com.company.logic.UserService;
 import com.company.models.account.User;
 import com.company.models.view.bonus.CreateBonusViewModel;
 import com.company.models.view.bonus.EditBonusViewModel;
 import com.company.models.view.bonus.SetupUserBonusViewModel;
+import com.company.storage.models.StorageUser;
 import com.company.storage.models.bonus.StorageBonus;
 import com.company.storage.models.bonus.StorageUserBonus;
 import com.company.storage.models.bonus.StorageUserBonusConfig;
@@ -68,50 +70,6 @@ public class BonusController {
             return "/bonus/create";
         }
 
-        var errors = false;
-
-        if (viewModel.getExpireTypeId() == StorageBonus.COUNT_EXPIRE_TYPE_ID) {
-            if (viewModel.getTriggerCount() == null) {
-                errors = true;
-                bindingResult.addError(new FieldError("viewModel","triggerCount", "Should be filled."));
-            }
-        }
-        else if (viewModel.getExpireTypeId() == StorageBonus.TERM_EXPIRE_TYPE_ID) {
-            if (viewModel.getToTerm() == null || viewModel.getToTerm().equals("")) {
-                errors = true;
-                bindingResult.addError(new FieldError("viewModel","toTerm", "Should be filled."));
-            }
-        }
-
-        if (viewModel.getTriggerActionTypeId() == StorageBonus.BALANCE_ADD_ACTION_ID) {
-            if (viewModel.getBonusKoef() == null) {
-                errors = true;
-                bindingResult.addError(new FieldError("viewModel","bonusKoef", "Should be filled."));
-            }
-        }
-        else if (viewModel.getTriggerActionTypeId() == StorageBonus.LOT_WIN_ACTION_ID) {
-            if (viewModel.getBonusKoef() == null) {
-                errors = true;
-                bindingResult.addError(new FieldError("viewModel","bonusKoef", "Should be filled."));
-            }
-            if (viewModel.getLotsIds() == null || viewModel.getLotsIds().equals("")) {
-                errors = true;
-                bindingResult.addError(new FieldError("viewModel","lotsIds", "Should be filled."));
-            }
-        }
-        else if (viewModel.getTriggerActionTypeId() == StorageBonus.LOT_PLAY_ACTION_ID) {
-            if (viewModel.getLotsIds() == null || viewModel.getLotsIds().equals("")) {
-                errors = true;
-                bindingResult.addError(new FieldError("viewModel","lotsIds", "Should be filled."));
-            }
-        }
-
-        if (errors) {
-            prepareCreateBonusModels(model);
-
-            return "/bonus/create";
-        }
-
         var bonus = CreateBonusViewModel.ToModel(viewModel);
 
         bonusRepository.add(bonus);
@@ -143,9 +101,7 @@ public class BonusController {
             Model model) {
 
         if (bindingResult.hasErrors()) {
-            prepareCreateBonusModels(model);
-
-            return "/bonus//edit";
+            return "/bonus/edit";
         }
 
         var optionalOldBonus = bonusRepository.getById(bonusId);
@@ -154,6 +110,7 @@ public class BonusController {
             return "redirect:/bonus/index";
         }
 
+        //todo hidden fields
         viewModel.setId(optionalOldBonus.get().getId());
         viewModel.setTriggerActionTypeId(optionalOldBonus.get().getTriggerActionId());
         viewModel.setExpireTypeId(optionalOldBonus.get().getExpireTypeId());
@@ -192,10 +149,6 @@ public class BonusController {
 
             return "/bonus/users";
         }
-
-        var userBonus = new StorageUserBonus();
-        userBonus.setBonusId(viewModel.getBonusId());
-        userBonus.setUserId(viewModel.getUserId());
 
         var optionalUser = userRepository.getById(viewModel.getUserId());
         var optionalBonus = bonusRepository.getById(viewModel.getBonusId());
@@ -261,21 +214,28 @@ public class BonusController {
 
         var bonuses = bonusRepository.getAll();
 
-        Map<Long, String> usersMap = users.stream().collect(Collectors.toMap(User::getId, User::getLogin));
-        Map<Long, String> bonusMap = bonuses.stream().collect(Collectors.toMap(StorageBonus::getId, StorageBonus::getName));
+        Map<Long, String> usersMap = users.stream()
+                .filter(x -> x.getRoles().stream()
+                        .anyMatch(r -> r.getName()
+                                .equals(UserService.IS_ENABLE_ROLE_NAME)))
+                .collect(Collectors.toMap(User::getId, User::getLogin));
+
+        Map<Long, String> bonusMap = bonuses.stream()
+                .filter(StorageBonus::getIsEnabled)
+                .collect(Collectors.toMap(StorageBonus::getId, StorageBonus::getName));
 
         Map<String, List<StorageUserBonus>> usersBonusMap = new HashMap<>();
 
         var arr = new ArrayList<String>();
 
         for (var user : users) {
-            var bonues = bonusService.getBonusesForUser(user);
+            var bonusesForUser = bonusService.getBonusesForUser(user);
 
-            if (bonues.size() == 0) {
+            if (bonusesForUser.size() == 0) {
                 continue;
             }
 
-            usersBonusMap.put(user.getLogin(), bonues);
+            usersBonusMap.put(user.getLogin(), bonusesForUser);
         }
 
         model.addAttribute("usersMap", usersMap);
