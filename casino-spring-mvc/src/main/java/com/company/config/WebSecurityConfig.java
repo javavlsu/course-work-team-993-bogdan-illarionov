@@ -26,7 +26,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests()
 
                 .requestMatchers("/account/profile/index").authenticated()
-                .requestMatchers("/bets").authenticated()
+                .requestMatchers("/bets").hasAnyAuthority("Player")
                 .requestMatchers("/account/manage").hasAnyAuthority("Admin")
                 .requestMatchers("/lots/manage").hasAnyAuthority("Admin")
                 .requestMatchers("/bonus/*").hasAnyAuthority("Admin")

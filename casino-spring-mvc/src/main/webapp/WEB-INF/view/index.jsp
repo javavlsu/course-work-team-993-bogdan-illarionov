@@ -2,6 +2,7 @@
 <%@page isELIgnored = "false" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%> 
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
 <html>
   <head>
     <title>Home</title>
@@ -12,86 +13,65 @@
 
     <div class="content">
       <h1>Welcome</h1>
-      <p>${pageContext.request.contextPath}</p>
+      <br/>
+      <br/>
       <div class="row">
         <div class="col-md-3">
           <h1><u>Main lots</u></h1>
         </div>
       </div>
       <div class="row">
-        <div class="col-md-3">
-          <div class="row">
-            <img class="small-title-image" src="https://www.scoopearth.com/wp-content/uploads/2022/04/photo-1592398191627-25b41eeaa398.jpg" alt="">
+        <c:forEach items="${lots}" var="lot">
+          <spring:url value="/lots/${lot.getId()}" var="openLink" />
+          <div class="col-md-3">
+            <a href="${openLink}">
+              <div class="row">
+                <img
+                  class="small-title-image"
+                  src="${lot.link}"
+                  alt="lot-image"
+                />
+              </div>
+              <div class="row">
+                <h2><c:out value="${lot.getName()}" /></h2>
+              </div>
+            </a>
           </div>
-          <div class="row">
-            <h2>Title</h2>
-          </div>
-        </div>
-        <div class="col-md-1"></div>
-        <div class="col-md-3">
-          <div class="row">
-            <img class="small-title-image" src="https://www.scoopearth.com/wp-content/uploads/2022/04/photo-1592398191627-25b41eeaa398.jpg" alt="">
-          </div>
-          <div class="row">
-            <h2>Title</h2>
-          </div>
-        </div>
-        <div class="col-md-1"></div>
-        <div class="col-md-3">
-          <div class="row">
-            <img class="small-title-image" src="https://www.scoopearth.com/wp-content/uploads/2022/04/photo-1592398191627-25b41eeaa398.jpg" alt="">
-          </div>
-          <div class="row">
-            <h2>Title</h2>
-          </div>
-        </div>
+          <div class="col-md-1"></div>
+        </c:forEach>
       </div>
+      <br/>
+      <br/>
       <div class="row">
         <div class="col-md-3">
-          <h1><u>Current history</u></h1>
+          <h1><u>Last bets</u></h1>
         </div>
       </div>
+      <br/>
       <div class="row">
         <table class="table bg-light text-dark">
           <thead>
-              <tr>
-                  <th>#</th>
-                  <th>login</th>
-                  <th>date</th>
-                  <th>status</th>
-                  <th>delta</th>
-              </tr>
+            <tr>
+              <th>#</th>
+              <th>Login</th>
+              <th>Lot</th>
+              <th>Status</th>
+              <th>Sum</th>
+            </tr>
           </thead>
           <tbody>
+            <c:forEach items="${bets}" var="bet">
               <tr>
-                <td>1</td>
-                <td>Login1</td>
-                <td>01-02-2022 08:20:33</td>
-                <td>Won</td>
-                <td>+ 100</td>
+                <td><c:out value="${bet.getId()}" /></td>
+                <td><c:out value="${bet.user.login}" /></td>
+                <td><c:out value="${bet.outcome.lot.name}" /></td>
+                <td><c:out value="${bet.getBetStatus().toString()}" /></td>
+                <td><c:out value="${bet.sum}" /></td>
               </tr>
-              <tr>
-                <td>1</td>
-                <td>Login1</td>
-                <td>01-02-2022 08:20:33</td>
-                <td>Loss</td>
-                <td>- 100 000</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>Login3</td>
-                <td>01-02-2022 08:20:33</td>
-                <td>Won</td>
-                <td>+ 100</td>
-              </tr>
-              <!-- <c:forEach items="${list}" var="bonus">
-                  <spring:url value="/bonus/edit/${bonus.getId()}" var="editLink" />
-                  
-              </c:forEach> -->
+            </c:forEach>
           </tbody>
-         <table>
+        </table>
       </div>
     </div>
-
   </body>
 </html>
