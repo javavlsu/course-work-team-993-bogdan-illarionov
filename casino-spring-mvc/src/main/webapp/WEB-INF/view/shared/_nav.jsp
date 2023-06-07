@@ -55,7 +55,7 @@
           </sec:authorize>
           <sec:authorize access="hasAnyAuthority('Admin')">
               <li class="nav-item">
-                <a class="nav-link text-dark" href="${bonusesLink}">Bonuses</a>
+                <a class="nav-link text-dark" href="${bonusesLink}">Manage Bonuses</a>
               </li>
           </sec:authorize>
           <sec:authorize access="hasAnyAuthority('Player')">

@@ -1,5 +1,6 @@
 package com.company.models.account;
 
+import com.company.logic.IncreasedChanceGamePlayer;
 import com.company.storage.models.StorageUser;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +19,7 @@ public class User implements UserDetails {
     public static final String REGEX_PASSWORD = "^[a-zA-Z0-9]*";
 
     @Getter
-    private Long id;
+    private Long id = 0L;
 
     @Getter
     private final String login;
@@ -36,6 +37,10 @@ public class User implements UserDetails {
     @Getter
     @Setter
     private BigDecimal balance;
+
+    @Getter
+    @Setter
+    private boolean isIncreased = false;
 
     public static StorageUser ToStorage(User user) {
         return new StorageUser(
@@ -62,6 +67,16 @@ public class User implements UserDetails {
         this.email = email;
         this.roles = roles;
         this.balance = balance;
+    }
+
+    public Integer getChance() {
+        return isIncreased ? IncreasedChanceGamePlayer.INCREASED_CHAHCE : 0;
+    }
+
+    public void updateRoles(Set<Role> roles) {
+        this.roles.clear();
+
+        this.roles.addAll(roles);
     }
 
     @Override

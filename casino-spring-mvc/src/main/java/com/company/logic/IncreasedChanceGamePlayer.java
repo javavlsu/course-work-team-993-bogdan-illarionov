@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class IncreasedChanceGamePlayer implements IGamePlayer {
+
+    public static final int INCREASED_CHAHCE = 50;
+
     private final double ABSORPTION_COEFFICIENT = 1.6;
     private final int REDUCE_PROCENT_LIMIT = 10;
     private final int REDUCE = 10;

@@ -1,6 +1,5 @@
-package com.company.abstractions;
+package com.company.abstractions.storage;
 
-import com.company.models.account.User;
 import com.company.storage.models.bonus.StorageBonus;
 import com.company.storage.models.bonus.StorageUserBonus;
 
@@ -11,7 +10,9 @@ public interface IBonusRepository extends IRepository<StorageBonus, Long> {
 
     void updateUserBonusConfig(StorageUserBonus storageUserBonus);
 
-    void updateBonusConfig(StorageBonus bonus);
+    void addUserBonus(StorageUserBonus userBonus);
 
-    void addBonusToUser(StorageBonus bonus, User user);
+    void removeUserBonus(StorageUserBonus userBonus);
+
+    void updateBonusConfig(StorageBonus bonus);
 }

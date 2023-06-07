@@ -1,14 +1,17 @@
 package com.company.controller;
 
+import com.company.abstractions.storage.IBonusRepository;
 import com.company.abstractions.IBonusService;
-import com.company.abstractions.IUserService;
+import com.company.abstractions.storage.IUserRepository;
+import com.company.logic.UserService;
 import com.company.models.account.User;
-import com.company.models.view.BetViewModel;
+import com.company.models.enums.BonusExpireType;
+import com.company.models.enums.BonusTriggerAction;
 import com.company.models.view.bonus.CreateBonusViewModel;
 import com.company.models.view.bonus.EditBonusViewModel;
 import com.company.models.view.bonus.SetupUserBonusViewModel;
+import com.company.storage.models.StorageUser;
 import com.company.storage.models.bonus.StorageBonus;
-import com.company.storage.models.bonus.StorageBonusConfig;
 import com.company.storage.models.bonus.StorageUserBonus;
 import com.company.storage.models.bonus.StorageUserBonusConfig;
 import jakarta.validation.Valid;
@@ -30,12 +33,15 @@ public class BonusController {
     private IBonusService bonusService;
 
     @Autowired
-    private IUserService userService;
+    private IBonusRepository bonusRepository;
+
+    @Autowired
+    private IUserRepository userRepository;
 
     @GetMapping("/index")
     public String getIndex(Model model) {
 
-        var bonuses = bonusService.getBonuses();
+        var bonuses = bonusRepository.getAll();
 
         model.addAttribute("list", bonuses);
 
@@ -66,53 +72,9 @@ public class BonusController {
             return "/bonus/create";
         }
 
-        var errors = false;
-
-        if (viewModel.getExpireTypeId() == StorageBonus.COUNT_EXPIRE_TYPE_ID) {
-            if (viewModel.getTriggerCount() == null) {
-                errors = true;
-                bindingResult.addError(new FieldError("viewModel","triggerCount", "Should be filled."));
-            }
-        }
-        else if (viewModel.getExpireTypeId() == StorageBonus.TERM_EXPIRE_TYPE_ID) {
-            if (viewModel.getToTerm() == null || viewModel.getToTerm().equals("")) {
-                errors = true;
-                bindingResult.addError(new FieldError("viewModel","toTerm", "Should be filled."));
-            }
-        }
-
-        if (viewModel.getTriggerActionTypeId() == StorageBonus.BALANCE_ADD_ACTION_ID) {
-            if (viewModel.getBonusKoef() == null) {
-                errors = true;
-                bindingResult.addError(new FieldError("viewModel","bonusKoef", "Should be filled."));
-            }
-        }
-        else if (viewModel.getTriggerActionTypeId() == StorageBonus.LOT_WIN_ACTION_ID) {
-            if (viewModel.getBonusKoef() == null) {
-                errors = true;
-                bindingResult.addError(new FieldError("viewModel","bonusKoef", "Should be filled."));
-            }
-            if (viewModel.getLotsIds() == null || viewModel.getLotsIds().equals("")) {
-                errors = true;
-                bindingResult.addError(new FieldError("viewModel","lotsIds", "Should be filled."));
-            }
-        }
-        else if (viewModel.getTriggerActionTypeId() == StorageBonus.LOT_PLAY_ACTION_ID) {
-            if (viewModel.getLotsIds() == null || viewModel.getLotsIds().equals("")) {
-                errors = true;
-                bindingResult.addError(new FieldError("viewModel","lotsIds", "Should be filled."));
-            }
-        }
-
-        if (errors) {
-            prepareCreateBonusModels(model);
-
-            return "/bonus/create";
-        }
-
         var bonus = CreateBonusViewModel.ToModel(viewModel);
 
-        bonusService.createBonus(bonus);
+        bonusRepository.add(bonus);
 
         return "redirect:/bonus/index";
     }
@@ -120,7 +82,7 @@ public class BonusController {
     @GetMapping("/edit/{bonusId}")
     public String getEdit(@PathVariable Long bonusId, Model model) {
 
-        var optionalBonus = bonusService.getById(bonusId);
+        var optionalBonus = bonusRepository.getById(bonusId);
 
         if (optionalBonus.isEmpty()) {
             return "redirect:/bonus/index";
@@ -133,6 +95,20 @@ public class BonusController {
         return "/bonus/edit";
     }
 
+    @GetMapping("/delete/{bonusId}")
+    public String getDelete(@PathVariable Long bonusId, Model model) {
+
+        var optionalBonus = bonusRepository.getById(bonusId);
+
+        if (optionalBonus.isEmpty()) {
+            return "redirect:/bonus/index";
+        }
+
+        bonusRepository.remove(optionalBonus.get());
+
+        return "redirect:/bonus/index";
+    }
+
     @PostMapping("/edit/{bonusId}")
     public String postEdit(
             @PathVariable Long bonusId,
@@ -141,24 +117,19 @@ public class BonusController {
             Model model) {
 
         if (bindingResult.hasErrors()) {
-            prepareCreateBonusModels(model);
-
-            return "/bonus//edit";
+            return "/bonus/edit";
         }
 
-        var optionalOldBonus = bonusService.getById(bonusId);
+        var optionalOldBonus = bonusRepository.getById(bonusId);
 
         if (optionalOldBonus.isEmpty()) {
             return "redirect:/bonus/index";
         }
 
-        viewModel.setId(optionalOldBonus.get().getId());
-        viewModel.setTriggerActionTypeId(optionalOldBonus.get().getTriggerActionId());
-        viewModel.setExpireTypeId(optionalOldBonus.get().getExpireTypeId());
 
         var bonus = EditBonusViewModel.ToModel(viewModel);
 
-        bonusService.updateBonus(bonus);
+        bonusRepository.update(bonus);
 
         return "redirect:/bonus/index";
     }
@@ -168,7 +139,7 @@ public class BonusController {
 
         var viewModel = new SetupUserBonusViewModel();
 
-        for (var user : userService.getUsers()) {
+        for (var user : userRepository.getAll()) {
             bonusService.syncBonuses(user);
         }
 
@@ -191,12 +162,8 @@ public class BonusController {
             return "/bonus/users";
         }
 
-        var userBonus = new StorageUserBonus();
-        userBonus.setBonusId(viewModel.getBonusId());
-        userBonus.setUserId(viewModel.getUserId());
-
-        var optionalUser = userService.getById(viewModel.getUserId());
-        var optionalBonus = bonusService.getById(viewModel.getBonusId());
+        var optionalUser = userRepository.getById(viewModel.getUserId());
+        var optionalBonus = bonusRepository.getById(viewModel.getBonusId());
 
         if (optionalUser.isEmpty() || optionalBonus.isEmpty()) {
             return "redirect:/bonus/users";
@@ -207,11 +174,32 @@ public class BonusController {
         return "redirect:/bonus/users";
     }
 
+    @GetMapping("/users/{userId}/delete/{bonusId}")
+    public String getUserDelete(@PathVariable Long userId, @PathVariable Long bonusId, Model model) {
+
+        var optionalUser = userRepository.getById(userId);
+        var optionalBonus = bonusRepository.getById(bonusId);
+
+        if (optionalUser.isEmpty() || optionalBonus.isEmpty()) {
+            return "redirect:/bonus/users";
+        }
+
+        var bonus = bonusService.getBonusesForUser(optionalUser.get()).stream().filter(x -> x.getBonusId().equals(bonusId)).findFirst();
+
+        if (bonus.isEmpty()) {
+            return "redirect:/bonus/users";
+        }
+
+        bonusRepository.removeUserBonus(bonus.get());
+
+        return "redirect:/bonus/users";
+    }
+
     @GetMapping("/users/{userId}/enable/{bonusId}")
     public String getUserEnable(@PathVariable Long userId, @PathVariable Long bonusId, Model model) {
 
-        var optionalUser = userService.getById(userId);
-        var optionalBonus = bonusService.getById(bonusId);
+        var optionalUser = userRepository.getById(userId);
+        var optionalBonus = bonusRepository.getById(bonusId);
 
         if (optionalUser.isEmpty() || optionalBonus.isEmpty()) {
             return "redirect:/bonus/users";
@@ -238,15 +226,15 @@ public class BonusController {
 
     private void prepareCreateBonusModels(Model model) {
         Map<Short, String> triggerMap = new HashMap<Short, String>(){{
-            put(StorageBonus.BALANCE_ADD_ACTION_ID, "Balance add");
-            put(StorageBonus.LOT_WIN_ACTION_ID, "Lot win");
-            put(StorageBonus.LOT_PLAY_ACTION_ID, "Lot play");
+            put(BonusTriggerAction.BonusAdd.getValue(), BonusTriggerAction.BonusAdd.name());
+            put(BonusTriggerAction.LotWin.getValue(), BonusTriggerAction.LotWin.name());
+            put(BonusTriggerAction.LotPlay.getValue(), BonusTriggerAction.LotPlay.name());
         }};
 
         Map<Short, String> expireMap = new HashMap<Short, String>(){{
-            put(StorageBonus.COUNT_EXPIRE_TYPE_ID, "Count");
-            put(StorageBonus.TERM_EXPIRE_TYPE_ID, "Term");
-            put(StorageBonus.UNLIMITED_EXPIRE_TYPE_ID, "Unlimited");
+            put(BonusExpireType.Count.getValue(), BonusExpireType.Count.name());
+            put(BonusExpireType.Term.getValue(), BonusExpireType.Term.name());
+            put(BonusExpireType.Unlimited.getValue(), BonusExpireType.Unlimited.name());
         }};
 
         model.addAttribute("expireMap", expireMap);
@@ -255,25 +243,32 @@ public class BonusController {
 
     private void prepareSetupUserBonusModels(Model model) {
 
-        var users = userService.getUsers();
+        var users = userRepository.getAll();
 
-        var bonuses = bonusService.getBonuses();
+        var bonuses = bonusRepository.getAll();
 
-        Map<Long, String> usersMap = users.stream().collect(Collectors.toMap(User::getId, User::getLogin));
-        Map<Long, String> bonusMap = bonuses.stream().collect(Collectors.toMap(StorageBonus::getId, StorageBonus::getName));
+        Map<Long, String> usersMap = users.stream()
+                .filter(x -> x.getRoles().stream()
+                        .anyMatch(r -> r.getName()
+                                .equals(UserService.IS_ENABLE_ROLE_NAME)))
+                .collect(Collectors.toMap(User::getId, User::getLogin));
+
+        Map<Long, String> bonusMap = bonuses.stream()
+                .filter(StorageBonus::getIsEnabled)
+                .collect(Collectors.toMap(StorageBonus::getId, StorageBonus::getName));
 
         Map<String, List<StorageUserBonus>> usersBonusMap = new HashMap<>();
 
         var arr = new ArrayList<String>();
 
         for (var user : users) {
-            var bonues = bonusService.getBonusesForUser(user);
+            var bonusesForUser = bonusService.getBonusesForUser(user);
 
-            if (bonues.size() == 0) {
+            if (bonusesForUser.size() == 0) {
                 continue;
             }
 
-            usersBonusMap.put(user.getLogin(), bonues);
+            usersBonusMap.put(user.getLogin(), bonusesForUser);
         }
 
         model.addAttribute("usersMap", usersMap);

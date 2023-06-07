@@ -1,5 +1,7 @@
 package com.company.storage.models.bonus;
 
+import com.company.models.enums.BonusExpireType;
+import com.company.models.enums.BonusTriggerAction;
 import com.company.storage.models.StorageOutcome;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,13 +17,13 @@ import java.math.BigInteger;
 @NoArgsConstructor
 public class StorageBonus {
 
-    public static final short BALANCE_ADD_ACTION_ID = 1;
-    public static final short LOT_WIN_ACTION_ID = 2;
-    public static final short LOT_PLAY_ACTION_ID = 3;
-
-    public static final short COUNT_EXPIRE_TYPE_ID = 1;
-    public static final short TERM_EXPIRE_TYPE_ID = 2;
-    public static final short UNLIMITED_EXPIRE_TYPE_ID = 3;
+//    public static final short BALANCE_ADD_ACTION_ID = 1;
+//    public static final short LOT_WIN_ACTION_ID = 2;
+//    public static final short LOT_PLAY_ACTION_ID = 3;
+//
+//    public static final short COUNT_EXPIRE_TYPE_ID = 1;
+//    public static final short TERM_EXPIRE_TYPE_ID = 2;
+//    public static final short UNLIMITED_EXPIRE_TYPE_ID = 3;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,21 +45,11 @@ public class StorageBonus {
     @JoinColumn(name = "id", referencedColumnName = "bonus_id")
     private StorageBonusConfig config;
 
-    public String getStringExpireType() {
-        return switch (expireTypeId) {
-            case COUNT_EXPIRE_TYPE_ID -> "Count";
-            case TERM_EXPIRE_TYPE_ID -> "Term";
-            case UNLIMITED_EXPIRE_TYPE_ID -> "Unlimited";
-            default -> "None";
-        };
+    public BonusExpireType getEnumExpireType() {
+        return BonusExpireType.values()[expireTypeId - 1];
     }
 
-    public String getStringTriggerType() {
-        return switch (triggerActionId) {
-            case BALANCE_ADD_ACTION_ID -> "Balance Add";
-            case LOT_WIN_ACTION_ID -> "Low win";
-            case LOT_PLAY_ACTION_ID -> "Lot play";
-            default -> "None";
-        };
+    public BonusTriggerAction getEnumTriggerAction() {
+        return BonusTriggerAction.values()[triggerActionId - 1];
     }
 }

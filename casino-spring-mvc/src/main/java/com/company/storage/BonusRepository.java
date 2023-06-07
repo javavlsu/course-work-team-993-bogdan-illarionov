@@ -1,7 +1,6 @@
 package com.company.storage;
 
-import com.company.abstractions.IBonusRepository;
-import com.company.models.account.User;
+import com.company.abstractions.storage.IBonusRepository;
 import com.company.storage.jpa.bonus.IBonusConfigJpaRepository;
 import com.company.storage.jpa.bonus.IBonusJpaRepository;
 import com.company.storage.jpa.bonus.IUserBonusJpaRepository;
@@ -26,7 +25,7 @@ public class BonusRepository implements IBonusRepository {
     private IBonusConfigJpaRepository bonusConfigRepository;
 
     @Override
-    public Iterable<StorageBonus> getAll() {
+    public List<StorageBonus> getAll() {
         return bonusRepository.findAll();
     }
 
@@ -72,6 +71,16 @@ public class BonusRepository implements IBonusRepository {
     }
 
     @Override
+    public void addUserBonus(StorageUserBonus userBonus) {
+        userBonusRepository.saveAndFlush(userBonus);
+    }
+
+    @Override
+    public void removeUserBonus(StorageUserBonus userBonus) {
+        userBonusRepository.delete(userBonus);
+    }
+
+    @Override
     public void updateBonusConfig(StorageBonus bonus) {
         var newConfig = bonus.getConfig();
 
@@ -83,34 +92,23 @@ public class BonusRepository implements IBonusRepository {
 
         var oldConfig = optional.get();
 
-        switch (bonus.getTriggerActionId()) {
-            case StorageBonus.BALANCE_ADD_ACTION_ID -> oldConfig.setBonusKoef(newConfig.getBonusKoef());
-            case StorageBonus.LOT_WIN_ACTION_ID -> {
+        switch (bonus.getEnumTriggerAction()) {
+            case BonusAdd -> oldConfig.setBonusKoef(newConfig.getBonusKoef());
+            case LotWin -> {
                 oldConfig.setBonusKoef(newConfig.getBonusKoef());
                 oldConfig.setLotsId(newConfig.getLotsId());
             }
-            case StorageBonus.LOT_PLAY_ACTION_ID -> oldConfig.setLotsId(newConfig.getLotsId());
-            default -> {
-            }
+            case LotPlay -> oldConfig.setLotsId(newConfig.getLotsId());
         }
 
-        switch (bonus.getExpireTypeId()) {
-            case StorageBonus.COUNT_EXPIRE_TYPE_ID -> oldConfig.setTriggerCount(newConfig.getTriggerCount());
-            case StorageBonus.TERM_EXPIRE_TYPE_ID -> oldConfig.setToTerm(newConfig.getToTerm());
-            default -> {
+        switch (bonus.getEnumExpireType()) {
+            case Count -> oldConfig.setTriggerCount(newConfig.getTriggerCount());
+            case Term -> oldConfig.setToTerm(newConfig.getToTerm());
+            case Unlimited -> {
             }
         }
 
         bonusConfigRepository.saveAndFlush(oldConfig);
 
-    }
-
-    @Override
-    public void addBonusToUser(StorageBonus bonus, User user) {
-        var newBonus = new StorageUserBonus();
-        newBonus.setBonusId(bonus.getId());
-        newBonus.setUserId(user.getId());
-
-        userBonusRepository.saveAndFlush(newBonus);
     }
 }

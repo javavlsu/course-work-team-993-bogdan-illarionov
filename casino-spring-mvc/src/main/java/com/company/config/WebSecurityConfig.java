@@ -24,14 +24,14 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .authorizeHttpRequests()
-                /*.requestMatchers("/account/lk/admin/").hasRole("Admin")
-                .requestMatchers("/account/lk/moderator/").hasRole("Moderator")*/
+
                 .requestMatchers("/account/profile/index").authenticated()
+                .requestMatchers("/bets").authenticated()
                 .requestMatchers("/account/manage").hasAnyAuthority("Admin")
+                .requestMatchers("/lots/manage").hasAnyAuthority("Admin")
+                .requestMatchers("/bonus/*").hasAnyAuthority("Admin")
                 .anyRequest().permitAll()
 
-                /*.requestMatchers("/account/login").permitAll()
-                .anyRequest().authenticated()*/
                 .and()
                 .formLogin()
                 .loginPage("/account/login")

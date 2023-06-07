@@ -1,5 +1,9 @@
 package com.company.models.view.bonus;
 
+import com.company.annotations.NotNullBonusFieldForExpireType;
+import com.company.annotations.NotNullBonusFieldForTriggerAction;
+import com.company.models.enums.BonusExpireType;
+import com.company.models.enums.BonusTriggerAction;
 import com.company.storage.models.bonus.StorageBonus;
 import com.company.storage.models.bonus.StorageBonusConfig;
 import jakarta.annotation.Nullable;
@@ -19,6 +23,8 @@ import java.util.Arrays;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@NotNullBonusFieldForTriggerAction(fieldName = "triggerActionTypeId")
+@NotNullBonusFieldForExpireType(fieldName = "expireTypeId")
 public class EditBonusViewModel {
 
     private Long id;
@@ -75,7 +81,7 @@ public class EditBonusViewModel {
             hours = hours % 24;
 
             if (days != 0) {
-                str += "days:" + days;
+                str += days+":days";
             }
 
             if (hours != 0) {
@@ -83,7 +89,7 @@ public class EditBonusViewModel {
                     str += ";";
                 }
 
-                str += "hours:" + hours;
+                str += hours+":hours";
             }
 
             if (minutes != 0) {
@@ -91,7 +97,7 @@ public class EditBonusViewModel {
                     str += ";";
                 }
 
-                str += "minutes:" + minutes;
+                str += minutes+":minutes";
             }
 
             viewModel.setToTerm(str);
@@ -110,10 +116,10 @@ public class EditBonusViewModel {
 
         var config = new StorageBonusConfig();
 
-        if (viewModel.getExpireTypeId() == StorageBonus.COUNT_EXPIRE_TYPE_ID) {
+        if (viewModel.getExpireTypeId() == BonusExpireType.Count.getValue()) {
             config.setTriggerCount(viewModel.getTriggerCount());
         }
-        else if (viewModel.getExpireTypeId() == StorageBonus.TERM_EXPIRE_TYPE_ID) {
+        else if (viewModel.getExpireTypeId() == BonusExpireType.Term.getValue()) {
 
             var duration = Duration.ZERO;
 
@@ -137,10 +143,10 @@ public class EditBonusViewModel {
                 Arrays.stream(splited).forEach(x -> {
                     var split = x.split(":");
 
-                    switch (split[0]) {
-                        case "hours" -> ref.setNewDuration(ref.getNewDuration().plusHours(Integer.parseInt(split[1])));
-                        case "minutes" -> ref.setNewDuration(ref.getNewDuration().plusMinutes(Integer.parseInt(split[1])));
-                        case "days" -> ref.setNewDuration(ref.getNewDuration().plusDays(Integer.parseInt(split[1])));
+                    switch (split[1]) {
+                        case "hours" -> ref.setNewDuration(ref.getNewDuration().plusHours(Integer.parseInt(split[0])));
+                        case "minutes" -> ref.setNewDuration(ref.getNewDuration().plusMinutes(Integer.parseInt(split[0])));
+                        case "days" -> ref.setNewDuration(ref.getNewDuration().plusDays(Integer.parseInt(split[0])));
                     }
                 });
 
@@ -151,14 +157,14 @@ public class EditBonusViewModel {
             config.setToTerm(duration);
         }
 
-        if (viewModel.getTriggerActionTypeId() == StorageBonus.BALANCE_ADD_ACTION_ID) {
+        if (viewModel.getTriggerActionTypeId() == BonusTriggerAction.BonusAdd.getValue()) {
             config.setBonusKoef(viewModel.getBonusKoef());
         }
-        else if (viewModel.getTriggerActionTypeId() == StorageBonus.LOT_WIN_ACTION_ID) {
+        else if (viewModel.getTriggerActionTypeId() == BonusTriggerAction.LotWin.getValue()) {
             config.setBonusKoef(viewModel.getBonusKoef());
             config.setLotsId(viewModel.getLotsIds());
         }
-        else if (viewModel.getTriggerActionTypeId() == StorageBonus.LOT_PLAY_ACTION_ID) {
+        else if (viewModel.getTriggerActionTypeId() == BonusTriggerAction.LotPlay.getValue()) {
             config.setLotsId(viewModel.getLotsIds());
         }
 
@@ -170,20 +176,10 @@ public class EditBonusViewModel {
     }
 
     public String getStringExpireType() {
-        return switch (expireTypeId) {
-            case StorageBonus.COUNT_EXPIRE_TYPE_ID -> "Count";
-            case StorageBonus.TERM_EXPIRE_TYPE_ID -> "Term";
-            case StorageBonus.UNLIMITED_EXPIRE_TYPE_ID -> "Unlimited";
-            default -> "None";
-        };
+        return BonusExpireType.values()[expireTypeId - 1].name();
     }
 
     public String getStringTriggerType() {
-        return switch (triggerActionTypeId) {
-            case StorageBonus.BALANCE_ADD_ACTION_ID -> "Balance Add";
-            case StorageBonus.LOT_WIN_ACTION_ID -> "Low win";
-            case StorageBonus.LOT_PLAY_ACTION_ID -> "Lot play";
-            default -> "None";
-        };
+        return BonusTriggerAction.values()[triggerActionTypeId - 1].name();
     }
 }

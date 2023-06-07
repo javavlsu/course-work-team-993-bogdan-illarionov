@@ -1,9 +1,11 @@
 package com.company.controller;
 
+import com.company.abstractions.storage.IBonusRepository;
 import com.company.abstractions.IBonusService;
+import com.company.abstractions.storage.IUserRepository;
 import com.company.abstractions.IUserService;
+import com.company.models.enums.BonusTriggerAction;
 import com.company.models.view.*;
-import com.company.storage.models.bonus.StorageBonus;
 import com.company.storage.models.bonus.StorageUserBonus;
 import com.company.storage.models.bonus.StorageUserBonusConfig;
 import jakarta.validation.Valid;
@@ -24,7 +26,13 @@ import java.util.Objects;
 public class AccountController {
 
     @Autowired
+    private IUserRepository userRepository;
+
+    @Autowired
     private IUserService userService;
+
+    @Autowired
+    private IBonusRepository bonusRepository;
 
     @Autowired
     private IBonusService bonusService;
@@ -55,7 +63,7 @@ public class AccountController {
             return "/account/register";
         }
 
-        if (userService.findByLogin(viewModel.getLogin()).isPresent()) {
+        if (userRepository.getByLogin(viewModel.getLogin()).isPresent()) {
             var error = new FieldError("viewModel","login", "Given login already exists.");
 
             bindingResult.addError(error);
@@ -63,7 +71,7 @@ public class AccountController {
             return "/account/register";
         }
 
-        userService.RegisterUser(RegisterViewModel.ToUser(viewModel));
+        userService.registerUser(RegisterViewModel.ToUser(viewModel));
 
         return "redirect:/account/login";
 
@@ -72,9 +80,9 @@ public class AccountController {
     @GetMapping("/manage")
     public String getUsers(Model model) {
 
-        var users = userService.getUsers();
+        var users = userRepository.getAll();
 
-        var roles = userService.getRoles();
+        var roles = userRepository.getRoles();
 
         var viewModel = new ManageUsersViewModel();
 
@@ -91,13 +99,13 @@ public class AccountController {
 
     @GetMapping("/manage/add")
     public String getAddRole(@RequestParam String name, @RequestParam Short role, Model model) {
-        var user = userService.findByLogin(name);
+        var user = userRepository.getByLogin(name);
 
         if (user.isEmpty()) {
             return "redirect:/account/manage";
         }
 
-        var roleToAdd = userService.getRoles().stream().filter(x -> Objects.equals(x.getId(), role)).findFirst();
+        var roleToAdd = userRepository.getRoles().stream().filter(x -> Objects.equals(x.getId(), role)).findFirst();
 
         if (roleToAdd.isEmpty()) {
             return "redirect:/account/manage";
@@ -107,20 +115,20 @@ public class AccountController {
 
         domain.getRoles().add(roleToAdd.get());
 
-        userService.UpdateUser(domain);
+        userService.updateUser(domain);
 
         return "redirect:/account/manage";
     }
 
     @GetMapping("/manage/remove")
     public String getRemoveRole(@RequestParam String name, @RequestParam Short role, Model model) {
-        var user = userService.findByLogin(name);
+        var user = userRepository.getByLogin(name);
 
         if (user.isEmpty()) {
             return "redirect:/account/manage";
         }
 
-        var roleToRemove = userService.getRoles().stream().filter(x -> Objects.equals(x.getId(), role)).findFirst();
+        var roleToRemove = userRepository.getRoles().stream().filter(x -> Objects.equals(x.getId(), role)).findFirst();
 
         if (roleToRemove.isEmpty()) {
             return "redirect:/account/manage";
@@ -130,7 +138,7 @@ public class AccountController {
 
         domain.getRoles().remove(roleToRemove.get());
 
-        userService.UpdateUser(domain);
+        userService.updateUser(domain);
 
         return "redirect:/account/manage";
     }
@@ -139,7 +147,7 @@ public class AccountController {
     public String getProfile(Authentication authentication, Model model) {
         var name = authentication.getName();
 
-        var user = userService.findByLogin(name);
+        var user = userRepository.getByLogin(name);
 
         if (user.isEmpty()) {
             return "redirect:/account/register";
@@ -159,7 +167,7 @@ public class AccountController {
             return "/account/profile";
         }
 
-        var user = userService.findByLogin(viewModel.getLogin());
+        var user = userRepository.getByLogin(viewModel.getLogin());
 
         if (user.isEmpty()) {
             return "redirect:/account/register";
@@ -175,7 +183,7 @@ public class AccountController {
 
         user.get().setEmail(viewModel.getEmail());
 
-        userService.UpdateUser(user.get());
+        userService.updateUser(user.get());
 
         return "redirect:/account/profile/index";
 
@@ -186,7 +194,7 @@ public class AccountController {
 
         var name = authentication.getName();
 
-        var user = userService.findByLogin(name);
+        var user = userRepository.getByLogin(name);
 
         if (user.isEmpty()) {
             return "redirect:/index";
@@ -208,63 +216,25 @@ public class AccountController {
 
         var name = authentication.getName();
 
-        var user = userService.findByLogin(name);
+        var optional = userRepository.getByLogin(name);
 
-        if (user.isEmpty()) {
+        if (optional.isEmpty()) {
             return "redirect:/index";
         }
 
-        bonusService.syncBonuses(user.get());
+        var result = bonusService.triggerBonuses(optional.get(), BonusTriggerAction.BonusAdd);
 
-        var bonuses = bonusService.getBonuses();
+        var delta = viewModel.getPositiveBalanceDelta();
 
-        var bonusesUser = bonusService.getBonusesForUser(user.get());
-
-        var bonusKoef = BigDecimal.ONE;
-
-        var userBonuses = new ArrayList<StorageUserBonus>();
-
-        for (var userBonus : bonusesUser) {
-
-            if (userBonus.getConfig()
-                    .stream()
-                    .filter(x -> x.getName().equals(StorageUserBonusConfig.IS_ENABLED_PARAM_NAME))
-                    .findAny().get().getValue().equals("false")) {
-                continue;
-            }
-
-            var bonus = bonuses.stream().filter(x -> x.getId().equals(userBonus.getBonusId())).findFirst();
-
-            if (bonus.isEmpty() || !bonus.get().getIsEnabled()) {
-                continue;
-            }
-
-            if (bonus.get().getTriggerActionId().equals(StorageBonus.BALANCE_ADD_ACTION_ID)) {
-                bonusKoef = bonusKoef.multiply(bonus.get().getConfig().getBonusKoef());
-
-                userBonuses.add(userBonus);
-            }
-
+        if (result.isPresent()) {
+            delta = delta.multiply(result.get().getBonusKoef());
         }
 
-        userService.ChangeUserBalance(user.get().getLogin(), viewModel.getPositiveBalanceDelta().multiply(bonusKoef));
+        userService.changeUserBalance(optional.get().getLogin(), delta);
 
-        for (var userBonus : userBonuses) {
-            var countParam = userBonus.getConfig()
-                    .stream()
-                    .filter(x -> x.getName().equals(StorageUserBonusConfig.COUNT_PARAM_NAME))
-                    .findAny();
+        bonusService.expireBonus(optional.get(), BonusTriggerAction.BonusAdd);
 
-            if (countParam.isEmpty()) {
-                continue;
-            }
-
-            countParam.get().setValue(Integer.toString(Integer.parseInt(countParam.get().getValue()) - 1));
-
-            bonusService.changeBonusOfUser(userBonus);
-        }
-
-        userService.UpdateAuthorizeUserData(userService.findByLogin(name).get());
+        userService.updateAuthorizeUserData(userRepository.getByLogin(name).get());
 
         return "redirect:/index";
     }

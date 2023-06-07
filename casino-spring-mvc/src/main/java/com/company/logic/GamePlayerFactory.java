@@ -2,6 +2,7 @@ package com.company.logic;
 
 import com.company.abstractions.IGamePlayer;
 import com.company.abstractions.IGamePlayerFactory;
+import com.company.models.account.User;
 import com.company.storage.models.StorageOutcome;
 import com.company.storage.models.StorageUser;
 import org.springframework.stereotype.Service;
@@ -13,9 +14,9 @@ public class GamePlayerFactory implements IGamePlayerFactory {
 
     @Override
     public IGamePlayer createGamePlayer(
-            StorageUser user,
+            User user,
             StorageOutcome selectedOutcome) {
-        var chance = user.getIncreasedChance();
+        var chance = user.getChance();
 
         if (!chance.equals(DEFAULT_CHANCE)){
             return new IncreasedChanceGamePlayer(
