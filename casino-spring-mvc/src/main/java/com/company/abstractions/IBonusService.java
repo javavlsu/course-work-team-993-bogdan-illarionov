@@ -1,6 +1,8 @@
 package com.company.abstractions;
 
+import com.company.models.BonusResult;
 import com.company.models.account.User;
+import com.company.models.enums.BonusTriggerAction;
 import com.company.storage.models.bonus.StorageBonus;
 import com.company.storage.models.bonus.StorageUserBonus;
 import org.springframework.validation.FieldError;
@@ -17,4 +19,8 @@ public interface IBonusService {
     void addBonusToUser(StorageBonus bonus, User user);
 
     void changeBonusOfUser(StorageUserBonus userBonus);
+
+    Optional<BonusResult> triggerBonuses(User user, BonusTriggerAction action);
+
+    void expireBonus(User user, BonusTriggerAction action);
 }

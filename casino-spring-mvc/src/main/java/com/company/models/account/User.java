@@ -1,5 +1,6 @@
 package com.company.models.account;
 
+import com.company.logic.IncreasedChanceGamePlayer;
 import com.company.storage.models.StorageUser;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,6 +38,10 @@ public class User implements UserDetails {
     @Setter
     private BigDecimal balance;
 
+    @Getter
+    @Setter
+    private boolean isIncreased = false;
+
     public static StorageUser ToStorage(User user) {
         return new StorageUser(
                 user.id,
@@ -62,6 +67,10 @@ public class User implements UserDetails {
         this.email = email;
         this.roles = roles;
         this.balance = balance;
+    }
+
+    public Integer getChance() {
+        return isIncreased ? IncreasedChanceGamePlayer.INCREASED_CHAHCE : 0;
     }
 
     public void updateRoles(Set<Role> roles) {

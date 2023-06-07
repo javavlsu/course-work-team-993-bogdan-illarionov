@@ -18,7 +18,7 @@ public class BetController {
     @GetMapping("/bets")
     public String getLots(Model model) {
 
-        var bets = betService.GetBetsByLoginUser(SecurityContextHolder.getContext().getAuthentication().getName());
+        var bets = betService.getBetsByLoginUser(SecurityContextHolder.getContext().getAuthentication().getName());
 
         model.addAttribute("bets", bets);
 

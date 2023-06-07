@@ -21,7 +21,7 @@ public class BetService implements IBetService {
 
     @Transactional
     @Override
-    public Set<StorageBet> GetBetsByLoginUser(String login) {
+    public Set<StorageBet> getBetsByLoginUser(String login) {
         var user = userRepository.getByLogin(login);
 
         if (user.isEmpty()) {

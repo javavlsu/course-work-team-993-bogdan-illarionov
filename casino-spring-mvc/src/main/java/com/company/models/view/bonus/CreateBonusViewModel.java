@@ -2,6 +2,8 @@ package com.company.models.view.bonus;
 
 import com.company.annotations.NotNullBonusFieldForExpireType;
 import com.company.annotations.NotNullBonusFieldForTriggerAction;
+import com.company.models.enums.BonusExpireType;
+import com.company.models.enums.BonusTriggerAction;
 import com.company.storage.models.bonus.StorageBonus;
 import com.company.storage.models.bonus.StorageBonusConfig;
 import jakarta.annotation.Nullable;
@@ -24,31 +26,31 @@ public class CreateBonusViewModel {
 
     public static Map<Short, List<String>> getFieldsForExpire() {
         return new HashMap<>(){{
-            put(StorageBonus.COUNT_EXPIRE_TYPE_ID,
+            put(BonusExpireType.Count.getValue(),
                     new ArrayList<>() {{
                         add("triggerCount");
             }});
-            put(StorageBonus.TERM_EXPIRE_TYPE_ID,
+            put(BonusExpireType.Term.getValue(),
                     new ArrayList<>() {{
                         add("toTerm");
                     }});
-            put(StorageBonus.UNLIMITED_EXPIRE_TYPE_ID,
+            put(BonusExpireType.Unlimited.getValue(),
                     Collections.<String> emptyList());
         }};
     }
 
     public static Map<Short, List<String>> getFieldsForAction() {
         return new HashMap<>(){{
-            put(StorageBonus.BALANCE_ADD_ACTION_ID,
+            put(BonusTriggerAction.BonusAdd.getValue(),
                     new ArrayList<>() {{
                         add("bonusKoef");
                     }});
-            put(StorageBonus.LOT_WIN_ACTION_ID,
+            put(BonusTriggerAction.LotWin.getValue(),
                     new ArrayList<>() {{
                         add("lotsIds");
                         add("bonusKoef");
                     }});
-            put(StorageBonus.LOT_PLAY_ACTION_ID,
+            put(BonusTriggerAction.LotPlay.getValue(),
                     new ArrayList<>() {{
                         add("lotsIds");
                     }});
@@ -96,10 +98,10 @@ public class CreateBonusViewModel {
 
         var config = new StorageBonusConfig();
 
-        if (viewModel.getExpireTypeId() == StorageBonus.COUNT_EXPIRE_TYPE_ID) {
+        if (viewModel.getExpireTypeId() == BonusExpireType.Count.getValue()) {
             config.setTriggerCount(viewModel.getTriggerCount());
         }
-        else if (viewModel.getExpireTypeId() == StorageBonus.TERM_EXPIRE_TYPE_ID) {
+        else if (viewModel.getExpireTypeId() == BonusExpireType.Term.getValue()) {
 
             var duration = Duration.ZERO;
 
@@ -123,10 +125,10 @@ public class CreateBonusViewModel {
                 Arrays.stream(splited).forEach(x -> {
                     var split = x.split(":");
 
-                    switch (split[0]) {
-                        case "hours" -> ref.setNewDuration(ref.getNewDuration().plusHours(Integer.parseInt(split[1])));
-                        case "minutes" -> ref.setNewDuration(ref.getNewDuration().plusMinutes(Integer.parseInt(split[1])));
-                        case "days" -> ref.setNewDuration(ref.getNewDuration().plusDays(Integer.parseInt(split[1])));
+                    switch (split[1]) {
+                        case "hours" -> ref.setNewDuration(ref.getNewDuration().plusHours(Integer.parseInt(split[0])));
+                        case "minutes" -> ref.setNewDuration(ref.getNewDuration().plusMinutes(Integer.parseInt(split[0])));
+                        case "days" -> ref.setNewDuration(ref.getNewDuration().plusDays(Integer.parseInt(split[0])));
                     }
                 });
 
@@ -137,14 +139,14 @@ public class CreateBonusViewModel {
             config.setToTerm(duration);
         }
 
-        if (viewModel.getTriggerActionTypeId() == StorageBonus.BALANCE_ADD_ACTION_ID) {
+        if (viewModel.getTriggerActionTypeId() == BonusTriggerAction.BonusAdd.getValue()) {
             config.setBonusKoef(viewModel.getBonusKoef());
         }
-        else if (viewModel.getTriggerActionTypeId() == StorageBonus.LOT_WIN_ACTION_ID) {
+        else if (viewModel.getTriggerActionTypeId() == BonusTriggerAction.LotWin.getValue()) {
             config.setBonusKoef(viewModel.getBonusKoef());
             config.setLotsId(viewModel.getLotsIds());
         }
-        else if (viewModel.getTriggerActionTypeId() == StorageBonus.LOT_PLAY_ACTION_ID) {
+        else if (viewModel.getTriggerActionTypeId() == BonusTriggerAction.LotPlay.getValue()) {
             config.setLotsId(viewModel.getLotsIds());
         }
 

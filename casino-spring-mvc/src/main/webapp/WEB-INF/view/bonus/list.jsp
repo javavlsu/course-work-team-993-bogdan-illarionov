@@ -48,8 +48,8 @@
               <tr>
                 <td><c:out value="${bonus.getId()}" /></td>
                 <td><c:out value="${bonus.getName()}" /></td>
-                <td><c:out value="${bonus.getStringTriggerType()}" /></td>
-                <td><c:out value="${bonus.getStringExpireType()}" /></td>
+                <td><c:out value="${bonus.getEnumTriggerAction().name()}" /></td>
+                <td><c:out value="${bonus.getEnumExpireType().name()}" /></td>
                 <td>
                   <c:if test="${bonus.isEnabled}">
                     <h4>&#9989;</h4>

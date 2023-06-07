@@ -4,8 +4,8 @@ import com.company.abstractions.storage.IBonusRepository;
 import com.company.abstractions.IBonusService;
 import com.company.abstractions.storage.IUserRepository;
 import com.company.abstractions.IUserService;
+import com.company.models.enums.BonusTriggerAction;
 import com.company.models.view.*;
-import com.company.storage.models.bonus.StorageBonus;
 import com.company.storage.models.bonus.StorageUserBonus;
 import com.company.storage.models.bonus.StorageUserBonusConfig;
 import jakarta.validation.Valid;
@@ -71,7 +71,7 @@ public class AccountController {
             return "/account/register";
         }
 
-        userService.RegisterUser(RegisterViewModel.ToUser(viewModel));
+        userService.registerUser(RegisterViewModel.ToUser(viewModel));
 
         return "redirect:/account/login";
 
@@ -115,7 +115,7 @@ public class AccountController {
 
         domain.getRoles().add(roleToAdd.get());
 
-        userService.UpdateUser(domain);
+        userService.updateUser(domain);
 
         return "redirect:/account/manage";
     }
@@ -138,7 +138,7 @@ public class AccountController {
 
         domain.getRoles().remove(roleToRemove.get());
 
-        userService.UpdateUser(domain);
+        userService.updateUser(domain);
 
         return "redirect:/account/manage";
     }
@@ -183,7 +183,7 @@ public class AccountController {
 
         user.get().setEmail(viewModel.getEmail());
 
-        userService.UpdateUser(user.get());
+        userService.updateUser(user.get());
 
         return "redirect:/account/profile/index";
 
@@ -216,63 +216,25 @@ public class AccountController {
 
         var name = authentication.getName();
 
-        var user = userRepository.getByLogin(name);
+        var optional = userRepository.getByLogin(name);
 
-        if (user.isEmpty()) {
+        if (optional.isEmpty()) {
             return "redirect:/index";
         }
 
-        bonusService.syncBonuses(user.get());
+        var result = bonusService.triggerBonuses(optional.get(), BonusTriggerAction.BonusAdd);
 
-        var bonuses = bonusRepository.getAll();
+        var delta = viewModel.getPositiveBalanceDelta();
 
-        var bonusesUser = bonusService.getBonusesForUser(user.get());
-
-        var bonusKoef = BigDecimal.ONE;
-
-        var userBonuses = new ArrayList<StorageUserBonus>();
-
-        for (var userBonus : bonusesUser) {
-
-            if (userBonus.getConfig()
-                    .stream()
-                    .filter(x -> x.getName().equals(StorageUserBonusConfig.IS_ENABLED_PARAM_NAME))
-                    .findAny().get().getValue().equals("false")) {
-                continue;
-            }
-
-            var bonus = bonuses.stream().filter(x -> x.getId().equals(userBonus.getBonusId())).findFirst();
-
-            if (bonus.isEmpty() || !bonus.get().getIsEnabled()) {
-                continue;
-            }
-
-            if (bonus.get().getTriggerActionId().equals(StorageBonus.BALANCE_ADD_ACTION_ID)) {
-                bonusKoef = bonusKoef.multiply(bonus.get().getConfig().getBonusKoef());
-
-                userBonuses.add(userBonus);
-            }
-
+        if (result.isPresent()) {
+            delta = delta.multiply(result.get().getBonusKoef());
         }
 
-        userService.ChangeUserBalance(user.get().getLogin(), viewModel.getPositiveBalanceDelta().multiply(bonusKoef));
+        userService.changeUserBalance(optional.get().getLogin(), delta);
 
-        for (var userBonus : userBonuses) {
-            var countParam = userBonus.getConfig()
-                    .stream()
-                    .filter(x -> x.getName().equals(StorageUserBonusConfig.COUNT_PARAM_NAME))
-                    .findAny();
+        bonusService.expireBonus(optional.get(), BonusTriggerAction.BonusAdd);
 
-            if (countParam.isEmpty()) {
-                continue;
-            }
-
-            countParam.get().setValue(Integer.toString(Integer.parseInt(countParam.get().getValue()) - 1));
-
-            bonusService.changeBonusOfUser(userBonus);
-        }
-
-        userService.UpdateAuthorizeUserData(userRepository.getByLogin(name).get());
+        userService.updateAuthorizeUserData(userRepository.getByLogin(name).get());
 
         return "redirect:/index";
     }

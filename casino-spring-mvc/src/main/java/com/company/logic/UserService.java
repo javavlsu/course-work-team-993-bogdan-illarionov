@@ -19,7 +19,7 @@ public class UserService implements IUserService {
     public IUserRepository userRepository;
 
     @Override
-    public void RegisterUser(User user) {
+    public void registerUser(User user) {
         var roles = userRepository.getRoles();
 
         var enableRole = roles.stream().filter(x -> x.getName().equals(IS_ENABLE_ROLE_NAME)).findFirst().get();
@@ -32,7 +32,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void UpdateUser(User user) {
+    public void updateUser(User user) {
         var optionalUser = userRepository.getByLogin(user.getLogin());
 
         if (optionalUser.isEmpty()) {
@@ -47,7 +47,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void ChangeUserBalance(String userLogin, BigDecimal balanceDelta) {
+    public void changeUserBalance(String userLogin, BigDecimal balanceDelta) {
         var storage = userRepository.getByLogin(userLogin);
 
         if (storage.isEmpty()) {
@@ -62,7 +62,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void UpdateAuthorizeUserData(User user) {
+    public void updateAuthorizeUserData(User user) {
 
         //Authentication newAuthentication = new UsernamePasswordAuthenticationToken(newUser, newUser.getPassword(), newUser.getAuthorities());
 

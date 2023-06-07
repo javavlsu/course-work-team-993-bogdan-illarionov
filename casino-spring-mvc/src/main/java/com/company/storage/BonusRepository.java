@@ -87,21 +87,19 @@ public class BonusRepository implements IBonusRepository {
 
         var oldConfig = optional.get();
 
-        switch (bonus.getTriggerActionId()) {
-            case StorageBonus.BALANCE_ADD_ACTION_ID -> oldConfig.setBonusKoef(newConfig.getBonusKoef());
-            case StorageBonus.LOT_WIN_ACTION_ID -> {
+        switch (bonus.getEnumTriggerAction()) {
+            case BonusAdd -> oldConfig.setBonusKoef(newConfig.getBonusKoef());
+            case LotWin -> {
                 oldConfig.setBonusKoef(newConfig.getBonusKoef());
                 oldConfig.setLotsId(newConfig.getLotsId());
             }
-            case StorageBonus.LOT_PLAY_ACTION_ID -> oldConfig.setLotsId(newConfig.getLotsId());
-            default -> {
-            }
+            case LotPlay -> oldConfig.setLotsId(newConfig.getLotsId());
         }
 
-        switch (bonus.getExpireTypeId()) {
-            case StorageBonus.COUNT_EXPIRE_TYPE_ID -> oldConfig.setTriggerCount(newConfig.getTriggerCount());
-            case StorageBonus.TERM_EXPIRE_TYPE_ID -> oldConfig.setToTerm(newConfig.getToTerm());
-            default -> {
+        switch (bonus.getEnumExpireType()) {
+            case Count -> oldConfig.setTriggerCount(newConfig.getTriggerCount());
+            case Term -> oldConfig.setToTerm(newConfig.getToTerm());
+            case Unlimited -> {
             }
         }
 

@@ -5,6 +5,8 @@ import com.company.abstractions.IBonusService;
 import com.company.abstractions.storage.IUserRepository;
 import com.company.logic.UserService;
 import com.company.models.account.User;
+import com.company.models.enums.BonusExpireType;
+import com.company.models.enums.BonusTriggerAction;
 import com.company.models.view.bonus.CreateBonusViewModel;
 import com.company.models.view.bonus.EditBonusViewModel;
 import com.company.models.view.bonus.SetupUserBonusViewModel;
@@ -189,15 +191,15 @@ public class BonusController {
 
     private void prepareCreateBonusModels(Model model) {
         Map<Short, String> triggerMap = new HashMap<Short, String>(){{
-            put(StorageBonus.BALANCE_ADD_ACTION_ID, "Balance add");
-            put(StorageBonus.LOT_WIN_ACTION_ID, "Lot win");
-            put(StorageBonus.LOT_PLAY_ACTION_ID, "Lot play");
+            put(BonusTriggerAction.BonusAdd.getValue(), BonusTriggerAction.BonusAdd.name());
+            put(BonusTriggerAction.LotWin.getValue(), BonusTriggerAction.LotWin.name());
+            put(BonusTriggerAction.LotPlay.getValue(), BonusTriggerAction.LotPlay.name());
         }};
 
         Map<Short, String> expireMap = new HashMap<Short, String>(){{
-            put(StorageBonus.COUNT_EXPIRE_TYPE_ID, "Count");
-            put(StorageBonus.TERM_EXPIRE_TYPE_ID, "Term");
-            put(StorageBonus.UNLIMITED_EXPIRE_TYPE_ID, "Unlimited");
+            put(BonusExpireType.Count.getValue(), BonusExpireType.Count.name());
+            put(BonusExpireType.Term.getValue(), BonusExpireType.Term.name());
+            put(BonusExpireType.Unlimited.getValue(), BonusExpireType.Unlimited.name());
         }};
 
         model.addAttribute("expireMap", expireMap);
