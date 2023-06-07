@@ -1,28 +1,19 @@
 package com.company.logic;
 
-import com.company.abstractions.IUserRepository;
+import com.company.abstractions.storage.IUserRepository;
 import com.company.abstractions.IUserService;
 import com.company.models.account.User;
-import com.company.storage.jpa.IRoleJpaRepository;
-import com.company.storage.jpa.IUserJpaRepository;
-import com.company.models.account.Role;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import com.company.storage.models.StorageUser;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService implements IUserService {
 
-    private static final String IS_ENABLE_ROLE_NAME = "Enabled";
-    private static final String PLAYER_ROLE_NAME = "Player";
+    public static final String IS_ENABLE_ROLE_NAME = "Enabled";
+    public static final String PLAYER_ROLE_NAME = "Player";
 
     @Autowired
     public IUserRepository userRepository;

@@ -1,8 +1,8 @@
-package com.company.abstractions;
+package com.company.abstractions.storage;
 
+import com.company.abstractions.storage.IRepository;
 import com.company.models.account.Role;
 import com.company.models.account.User;
-import com.company.storage.models.StorageUser;
 
 import java.util.List;
 import java.util.Optional;

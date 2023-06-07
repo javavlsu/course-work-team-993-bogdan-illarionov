@@ -1,4 +1,4 @@
-package com.company.abstractions;
+package com.company.abstractions.storage;
 
 import java.util.List;
 import java.util.Optional;

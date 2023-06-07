@@ -1,9 +1,8 @@
 package com.company.storage;
 
-import com.company.abstractions.IRepository;
+import com.company.abstractions.storage.IRepository;
 import com.company.storage.jpa.ILotJpaRepository;
 import com.company.storage.models.StorageLot;
-import com.company.storage.models.bonus.StorageBonus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

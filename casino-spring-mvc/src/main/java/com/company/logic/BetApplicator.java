@@ -1,6 +1,8 @@
 package com.company.logic;
 
 import com.company.abstractions.*;
+import com.company.abstractions.storage.IRepository;
+import com.company.abstractions.storage.IUserRepository;
 import com.company.models.account.User;
 import com.company.models.casino.Bet;
 import com.company.models.casino.BetStatus;

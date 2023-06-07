@@ -1,6 +1,6 @@
 package com.company.storage;
 
-import com.company.abstractions.IRepository;
+import com.company.abstractions.storage.IRepository;
 import com.company.storage.jpa.IGameOutcomesJpaRepository;
 import com.company.storage.models.StorageGameOutcome;
 import org.springframework.beans.factory.annotation.Autowired;

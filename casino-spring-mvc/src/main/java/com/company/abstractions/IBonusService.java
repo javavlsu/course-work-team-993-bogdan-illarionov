@@ -3,6 +3,7 @@ package com.company.abstractions;
 import com.company.models.account.User;
 import com.company.storage.models.bonus.StorageBonus;
 import com.company.storage.models.bonus.StorageUserBonus;
+import org.springframework.validation.FieldError;
 
 import java.util.List;
 import java.util.Optional;

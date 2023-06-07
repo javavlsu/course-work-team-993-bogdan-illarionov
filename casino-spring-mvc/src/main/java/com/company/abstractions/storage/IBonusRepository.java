@@ -1,6 +1,5 @@
-package com.company.abstractions;
+package com.company.abstractions.storage;
 
-import com.company.models.account.User;
 import com.company.storage.models.bonus.StorageBonus;
 import com.company.storage.models.bonus.StorageUserBonus;
 

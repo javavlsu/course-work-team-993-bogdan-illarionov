@@ -1,7 +1,6 @@
 package com.company.storage;
 
-import com.company.abstractions.IBonusRepository;
-import com.company.models.account.User;
+import com.company.abstractions.storage.IBonusRepository;
 import com.company.storage.jpa.bonus.IBonusConfigJpaRepository;
 import com.company.storage.jpa.bonus.IBonusJpaRepository;
 import com.company.storage.jpa.bonus.IUserBonusJpaRepository;

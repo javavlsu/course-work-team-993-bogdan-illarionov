@@ -1,27 +1,20 @@
 package com.company.controller;
 
 import com.company.abstractions.IBetApplicator;
-import com.company.abstractions.IRepository;
-import com.company.models.account.Role;
-import com.company.models.account.User;
+import com.company.abstractions.storage.IRepository;
 import com.company.models.casino.Bet;
-import com.company.models.view.EditOutcomeModel;
-import com.company.models.view.RegisterViewModel;
 import com.company.storage.models.StorageLot;
 import com.company.models.view.BetViewModel;
 import com.company.storage.models.StorageOutcome;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;

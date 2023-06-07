@@ -1,7 +1,6 @@
 package com.company.storage;
 
-import com.company.abstractions.IRepository;
-import com.company.abstractions.IUserRepository;
+import com.company.abstractions.storage.IUserRepository;
 import com.company.models.account.Role;
 import com.company.models.account.User;
 import com.company.storage.jpa.IRoleJpaRepository;

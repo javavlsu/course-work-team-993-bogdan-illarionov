@@ -1,6 +1,6 @@
 package com.company.logic;
 
-import com.company.abstractions.IBonusRepository;
+import com.company.abstractions.storage.IBonusRepository;
 import com.company.abstractions.IBonusService;
 import com.company.models.account.User;
 import com.company.storage.models.bonus.StorageBonus;

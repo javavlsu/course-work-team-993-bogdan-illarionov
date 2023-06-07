@@ -1,8 +1,8 @@
 package com.company.controller;
 
-import com.company.abstractions.IBonusRepository;
+import com.company.abstractions.storage.IBonusRepository;
 import com.company.abstractions.IBonusService;
-import com.company.abstractions.IUserRepository;
+import com.company.abstractions.storage.IUserRepository;
 import com.company.abstractions.IUserService;
 import com.company.models.view.*;
 import com.company.storage.models.bonus.StorageBonus;
