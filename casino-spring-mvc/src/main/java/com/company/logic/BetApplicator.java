@@ -76,6 +76,7 @@ public class BetApplicator implements IBetApplicator {
             userService.changeUserBalance(user.get().getLogin(), winSum);
         }
 
+        //todo
         //bonusService.expireBonus(user.get(), BonusTriggerAction.LotPlay);
 
         userService.updateAuthorizeUserData(userRepository.getByLogin(bet.getUserLogin()).get());

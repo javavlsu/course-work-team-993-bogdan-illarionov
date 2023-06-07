@@ -43,7 +43,32 @@ public class BetRepository implements IBetRepository {
 
     @Transactional
     @Override
-    public Set<StorageBet> GetBetsByUserId(Long userId) {
+    public Set<StorageBet> getBetsByUserId(Long userId) {
         return betRepository.findAllByUserId(userId);
     }
+
+    @Override
+    public List<StorageBet> getPartBetsOfUser(Long userId, Integer quantity, Integer skipQuantity) {
+        return betRepository.getQuantityOfUser(userId ,quantity, skipQuantity).stream().toList();
+    }
+
+    @Override
+    public List<StorageBet> getPartOgBets(int quantity, int skipQuantity) {
+        return betRepository.getQuantity(quantity, skipQuantity).stream().toList();
+    }
+
+    @Override
+    public int getCountOfUser(Long userId) {
+        return betRepository.getCountOfUser(userId);
+    }
+
+    @Override
+    public List<StorageBet> getByParams(int quantity, int skipCount) {
+        return null;
+    }
+
+//    @Override
+//    public List<StorageBet> getPartBetsOfUser(Long userId, int quantity, int skipQuantity) {
+//        return betRepository.getQuantity(userId ,quantity, skipQuantity).stream().toList();
+//    }
 }
