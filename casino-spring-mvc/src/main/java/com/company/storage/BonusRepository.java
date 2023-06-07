@@ -26,7 +26,7 @@ public class BonusRepository implements IBonusRepository {
     private IBonusConfigJpaRepository bonusConfigRepository;
 
     @Override
-    public Iterable<StorageBonus> getAll() {
+    public List<StorageBonus> getAll() {
         return bonusRepository.findAll();
     }
 
@@ -72,6 +72,11 @@ public class BonusRepository implements IBonusRepository {
     }
 
     @Override
+    public void addUserBonus(StorageUserBonus userBonus) {
+        userBonusRepository.saveAndFlush(userBonus);
+    }
+
+    @Override
     public void updateBonusConfig(StorageBonus bonus) {
         var newConfig = bonus.getConfig();
 
@@ -103,14 +108,5 @@ public class BonusRepository implements IBonusRepository {
 
         bonusConfigRepository.saveAndFlush(oldConfig);
 
-    }
-
-    @Override
-    public void addBonusToUser(StorageBonus bonus, User user) {
-        var newBonus = new StorageUserBonus();
-        newBonus.setBonusId(bonus.getId());
-        newBonus.setUserId(user.getId());
-
-        userBonusRepository.saveAndFlush(newBonus);
     }
 }

@@ -11,14 +11,6 @@ public interface IBonusService {
 
     void syncBonuses(User user);
 
-    List<StorageBonus> getBonuses();
-
-    Optional<StorageBonus> getById(Long id);
-
-    void createBonus(StorageBonus bonus);
-
-    void updateBonus(StorageBonus bonus);
-
     List<StorageUserBonus> getBonusesForUser(User user);
 
     void addBonusToUser(StorageBonus bonus, User user);

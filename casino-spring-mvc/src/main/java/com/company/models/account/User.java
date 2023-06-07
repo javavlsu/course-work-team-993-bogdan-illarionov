@@ -18,7 +18,7 @@ public class User implements UserDetails {
     public static final String REGEX_PASSWORD = "^[a-zA-Z0-9]*";
 
     @Getter
-    private Long id;
+    private Long id = 0L;
 
     @Getter
     private final String login;
@@ -62,6 +62,12 @@ public class User implements UserDetails {
         this.email = email;
         this.roles = roles;
         this.balance = balance;
+    }
+
+    public void updateRoles(Set<Role> roles) {
+        this.roles.clear();
+
+        this.roles.addAll(roles);
     }
 
     @Override

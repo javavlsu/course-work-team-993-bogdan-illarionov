@@ -1,14 +1,13 @@
 package com.company.controller;
 
+import com.company.abstractions.IBonusRepository;
 import com.company.abstractions.IBonusService;
-import com.company.abstractions.IUserService;
+import com.company.abstractions.IUserRepository;
 import com.company.models.account.User;
-import com.company.models.view.BetViewModel;
 import com.company.models.view.bonus.CreateBonusViewModel;
 import com.company.models.view.bonus.EditBonusViewModel;
 import com.company.models.view.bonus.SetupUserBonusViewModel;
 import com.company.storage.models.bonus.StorageBonus;
-import com.company.storage.models.bonus.StorageBonusConfig;
 import com.company.storage.models.bonus.StorageUserBonus;
 import com.company.storage.models.bonus.StorageUserBonusConfig;
 import jakarta.validation.Valid;
@@ -30,12 +29,15 @@ public class BonusController {
     private IBonusService bonusService;
 
     @Autowired
-    private IUserService userService;
+    private IBonusRepository bonusRepository;
+
+    @Autowired
+    private IUserRepository userRepository;
 
     @GetMapping("/index")
     public String getIndex(Model model) {
 
-        var bonuses = bonusService.getBonuses();
+        var bonuses = bonusRepository.getAll();
 
         model.addAttribute("list", bonuses);
 
@@ -112,7 +114,7 @@ public class BonusController {
 
         var bonus = CreateBonusViewModel.ToModel(viewModel);
 
-        bonusService.createBonus(bonus);
+        bonusRepository.add(bonus);
 
         return "redirect:/bonus/index";
     }
@@ -120,7 +122,7 @@ public class BonusController {
     @GetMapping("/edit/{bonusId}")
     public String getEdit(@PathVariable Long bonusId, Model model) {
 
-        var optionalBonus = bonusService.getById(bonusId);
+        var optionalBonus = bonusRepository.getById(bonusId);
 
         if (optionalBonus.isEmpty()) {
             return "redirect:/bonus/index";
@@ -146,7 +148,7 @@ public class BonusController {
             return "/bonus//edit";
         }
 
-        var optionalOldBonus = bonusService.getById(bonusId);
+        var optionalOldBonus = bonusRepository.getById(bonusId);
 
         if (optionalOldBonus.isEmpty()) {
             return "redirect:/bonus/index";
@@ -158,7 +160,7 @@ public class BonusController {
 
         var bonus = EditBonusViewModel.ToModel(viewModel);
 
-        bonusService.updateBonus(bonus);
+        bonusRepository.update(bonus);
 
         return "redirect:/bonus/index";
     }
@@ -168,7 +170,7 @@ public class BonusController {
 
         var viewModel = new SetupUserBonusViewModel();
 
-        for (var user : userService.getUsers()) {
+        for (var user : userRepository.getAll()) {
             bonusService.syncBonuses(user);
         }
 
@@ -195,8 +197,8 @@ public class BonusController {
         userBonus.setBonusId(viewModel.getBonusId());
         userBonus.setUserId(viewModel.getUserId());
 
-        var optionalUser = userService.getById(viewModel.getUserId());
-        var optionalBonus = bonusService.getById(viewModel.getBonusId());
+        var optionalUser = userRepository.getById(viewModel.getUserId());
+        var optionalBonus = bonusRepository.getById(viewModel.getBonusId());
 
         if (optionalUser.isEmpty() || optionalBonus.isEmpty()) {
             return "redirect:/bonus/users";
@@ -210,8 +212,8 @@ public class BonusController {
     @GetMapping("/users/{userId}/enable/{bonusId}")
     public String getUserEnable(@PathVariable Long userId, @PathVariable Long bonusId, Model model) {
 
-        var optionalUser = userService.getById(userId);
-        var optionalBonus = bonusService.getById(bonusId);
+        var optionalUser = userRepository.getById(userId);
+        var optionalBonus = bonusRepository.getById(bonusId);
 
         if (optionalUser.isEmpty() || optionalBonus.isEmpty()) {
             return "redirect:/bonus/users";
@@ -255,9 +257,9 @@ public class BonusController {
 
     private void prepareSetupUserBonusModels(Model model) {
 
-        var users = userService.getUsers();
+        var users = userRepository.getAll();
 
-        var bonuses = bonusService.getBonuses();
+        var bonuses = bonusRepository.getAll();
 
         Map<Long, String> usersMap = users.stream().collect(Collectors.toMap(User::getId, User::getLogin));
         Map<Long, String> bonusMap = bonuses.stream().collect(Collectors.toMap(StorageBonus::getId, StorageBonus::getName));

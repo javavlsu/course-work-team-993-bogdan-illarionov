@@ -11,7 +11,7 @@ public interface IBonusRepository extends IRepository<StorageBonus, Long> {
 
     void updateUserBonusConfig(StorageUserBonus storageUserBonus);
 
-    void updateBonusConfig(StorageBonus bonus);
+    void addUserBonus(StorageUserBonus userBonus);
 
-    void addBonusToUser(StorageBonus bonus, User user);
+    void updateBonusConfig(StorageBonus bonus);
 }

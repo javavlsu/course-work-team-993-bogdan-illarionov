@@ -45,7 +45,13 @@ public class StorageUser {
             return null;
         }
 
-        return new User(storageUser.id, storageUser.login, storageUser.password, storageUser.email, storageUser.roles, storageUser.balance);
+        return new User(
+                storageUser.id,
+                storageUser.login,
+                storageUser.password,
+                storageUser.email,
+                storageUser.roles,
+                storageUser.balance);
     }
 
     //todo [0-100%]

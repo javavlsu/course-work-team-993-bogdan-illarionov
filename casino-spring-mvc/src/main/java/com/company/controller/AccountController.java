@@ -1,6 +1,8 @@
 package com.company.controller;
 
+import com.company.abstractions.IBonusRepository;
 import com.company.abstractions.IBonusService;
+import com.company.abstractions.IUserRepository;
 import com.company.abstractions.IUserService;
 import com.company.models.view.*;
 import com.company.storage.models.bonus.StorageBonus;
@@ -24,7 +26,13 @@ import java.util.Objects;
 public class AccountController {
 
     @Autowired
+    private IUserRepository userRepository;
+
+    @Autowired
     private IUserService userService;
+
+    @Autowired
+    private IBonusRepository bonusRepository;
 
     @Autowired
     private IBonusService bonusService;
@@ -55,7 +63,7 @@ public class AccountController {
             return "/account/register";
         }
 
-        if (userService.findByLogin(viewModel.getLogin()).isPresent()) {
+        if (userRepository.getByLogin(viewModel.getLogin()).isPresent()) {
             var error = new FieldError("viewModel","login", "Given login already exists.");
 
             bindingResult.addError(error);
@@ -72,9 +80,9 @@ public class AccountController {
     @GetMapping("/manage")
     public String getUsers(Model model) {
 
-        var users = userService.getUsers();
+        var users = userRepository.getAll();
 
-        var roles = userService.getRoles();
+        var roles = userRepository.getRoles();
 
         var viewModel = new ManageUsersViewModel();
 
@@ -91,13 +99,13 @@ public class AccountController {
 
     @GetMapping("/manage/add")
     public String getAddRole(@RequestParam String name, @RequestParam Short role, Model model) {
-        var user = userService.findByLogin(name);
+        var user = userRepository.getByLogin(name);
 
         if (user.isEmpty()) {
             return "redirect:/account/manage";
         }
 
-        var roleToAdd = userService.getRoles().stream().filter(x -> Objects.equals(x.getId(), role)).findFirst();
+        var roleToAdd = userRepository.getRoles().stream().filter(x -> Objects.equals(x.getId(), role)).findFirst();
 
         if (roleToAdd.isEmpty()) {
             return "redirect:/account/manage";
@@ -114,13 +122,13 @@ public class AccountController {
 
     @GetMapping("/manage/remove")
     public String getRemoveRole(@RequestParam String name, @RequestParam Short role, Model model) {
-        var user = userService.findByLogin(name);
+        var user = userRepository.getByLogin(name);
 
         if (user.isEmpty()) {
             return "redirect:/account/manage";
         }
 
-        var roleToRemove = userService.getRoles().stream().filter(x -> Objects.equals(x.getId(), role)).findFirst();
+        var roleToRemove = userRepository.getRoles().stream().filter(x -> Objects.equals(x.getId(), role)).findFirst();
 
         if (roleToRemove.isEmpty()) {
             return "redirect:/account/manage";
@@ -139,7 +147,7 @@ public class AccountController {
     public String getProfile(Authentication authentication, Model model) {
         var name = authentication.getName();
 
-        var user = userService.findByLogin(name);
+        var user = userRepository.getByLogin(name);
 
         if (user.isEmpty()) {
             return "redirect:/account/register";
@@ -159,7 +167,7 @@ public class AccountController {
             return "/account/profile";
         }
 
-        var user = userService.findByLogin(viewModel.getLogin());
+        var user = userRepository.getByLogin(viewModel.getLogin());
 
         if (user.isEmpty()) {
             return "redirect:/account/register";
@@ -186,7 +194,7 @@ public class AccountController {
 
         var name = authentication.getName();
 
-        var user = userService.findByLogin(name);
+        var user = userRepository.getByLogin(name);
 
         if (user.isEmpty()) {
             return "redirect:/index";
@@ -208,7 +216,7 @@ public class AccountController {
 
         var name = authentication.getName();
 
-        var user = userService.findByLogin(name);
+        var user = userRepository.getByLogin(name);
 
         if (user.isEmpty()) {
             return "redirect:/index";
@@ -216,7 +224,7 @@ public class AccountController {
 
         bonusService.syncBonuses(user.get());
 
-        var bonuses = bonusService.getBonuses();
+        var bonuses = bonusRepository.getAll();
 
         var bonusesUser = bonusService.getBonusesForUser(user.get());
 
@@ -264,7 +272,7 @@ public class AccountController {
             bonusService.changeBonusOfUser(userBonus);
         }
 
-        userService.UpdateAuthorizeUserData(userService.findByLogin(name).get());
+        userService.UpdateAuthorizeUserData(userRepository.getByLogin(name).get());
 
         return "redirect:/index";
     }

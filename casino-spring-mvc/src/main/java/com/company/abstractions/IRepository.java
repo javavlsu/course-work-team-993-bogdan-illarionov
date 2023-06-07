@@ -1,5 +1,6 @@
 package com.company.abstractions;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -12,7 +13,7 @@ public interface IRepository<TEntity, TKey> {
      * Возвращет все сушности.
      * @return Коллекцию типа {@link Iterable}
      */
-    public Iterable<TEntity> getAll();
+    public List<TEntity> getAll();
 
     /**
      * Возвращет сушность по её идентификатору.

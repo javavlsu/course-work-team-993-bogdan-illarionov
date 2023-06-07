@@ -7,6 +7,7 @@ import com.company.storage.models.bonus.StorageBonus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,7 +17,7 @@ public class LotRepository implements IRepository<StorageLot, Long> {
     private ILotJpaRepository lotRepository;
 
     @Override
-    public Iterable<StorageLot> getAll() {
+    public List<StorageLot> getAll() {
         return lotRepository.findAll();
     }
 

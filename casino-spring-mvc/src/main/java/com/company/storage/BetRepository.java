@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -17,7 +18,7 @@ public class BetRepository implements com.company.abstractions.IBetRepository {
     private IBetJpaRepository betRepository;
 
     @Override
-    public Iterable<StorageBet> getAll() {
+    public List<StorageBet> getAll() {
         return betRepository.findAll();
     }
 

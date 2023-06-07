@@ -22,7 +22,11 @@ public class BetApplicator implements IBetApplicator {
     @Autowired
     private IRepository<StorageBet, Long> betRepository;
     @Autowired
+    private IUserRepository userRepository;
+
+    @Autowired
     private IUserService userService;
+
     @Autowired
     private IRepository<StorageOutcome, Long> outcomeRepository;
     @Autowired
@@ -34,7 +38,7 @@ public class BetApplicator implements IBetApplicator {
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
     @Override
     public IReadOnlyPlayingResult applyBet(Bet bet) {
-        var user = userService.findByLogin(bet.getUserLogin());
+        var user = userRepository.getByLogin(bet.getUserLogin());
 
         if (user.isEmpty())
         {
@@ -73,7 +77,7 @@ public class BetApplicator implements IBetApplicator {
             userService.ChangeUserBalance(user.get().getLogin(), winSum);
         }
 
-        userService.UpdateAuthorizeUserData(userService.findByLogin(bet.getUserLogin()).get());
+        userService.UpdateAuthorizeUserData(userRepository.getByLogin(bet.getUserLogin()).get());
 
         return result;
     }

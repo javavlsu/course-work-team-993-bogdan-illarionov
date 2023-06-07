@@ -6,6 +6,7 @@ import com.company.storage.models.StorageOutcome;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -14,7 +15,7 @@ public class OutcomesRepository implements IRepository<StorageOutcome, Long> {
     public IOutcomesJpaRepository outcomesRepository;
 
     @Override
-    public Iterable<StorageOutcome> getAll() {
+    public List<StorageOutcome> getAll() {
         return outcomesRepository.findAll();
     }
 

@@ -28,39 +28,8 @@ public class UserService implements IUserService {
     public IUserRepository userRepository;
 
     @Override
-    public Optional<User> findByLogin(String login) {
-
-        var user = userRepository.getByLogin(login);
-
-        return Optional.ofNullable(StorageUser.toModel(user.orElse(null)));
-    }
-
-    @Override
-    public Optional<User> getById(Long id) {
-        var user = userRepository.getById(id);
-
-        return Optional.ofNullable(StorageUser.toModel(user.orElse(null)));
-    }
-
-    @Override
-    public List<Role> getRoles() {
-        return userRepository.getRoles();
-    }
-
-    @Override
-    public List<User> getUsers() {
-        List<User> list = new ArrayList<>();
-
-        userRepository
-                .getAll()
-                .forEach(x -> list.add(StorageUser.toModel(x)));
-
-        return list;
-    }
-
-    @Override
     public void RegisterUser(User user) {
-        var roles = getRoles();
+        var roles = userRepository.getRoles();
 
         var enableRole = roles.stream().filter(x -> x.getName().equals(IS_ENABLE_ROLE_NAME)).findFirst().get();
         var playerRole = roles.stream().filter(x -> x.getName().equals(PLAYER_ROLE_NAME)).findFirst().get();
@@ -68,32 +37,22 @@ public class UserService implements IUserService {
         user.getRoles().add(enableRole);
         user.getRoles().add(playerRole);
 
-        var storage = new StorageUser();
-
-        storage.setId(Long.reverse(0));
-        storage.setLogin(user.getLogin());
-        storage.setPassword(user.getPassword());
-        storage.setEmail(user.getEmail());
-        storage.setRoles(user.getRoles());
-
-        userRepository.add(storage);
+        userRepository.add(user);
     }
 
     @Override
     public void UpdateUser(User user) {
-        var storage = userRepository.getByLogin(user.getLogin());
+        var optionalUser = userRepository.getByLogin(user.getLogin());
 
-        if (storage.isEmpty()) {
+        if (optionalUser.isEmpty()) {
             return;
         }
 
-        var storageUser = storage.get();
+        optionalUser.get().setEmail(user.getEmail());
+        optionalUser.get().setPassword(user.getPassword());
+        optionalUser.get().updateRoles(user.getRoles());
 
-        storageUser.setEmail(user.getEmail());
-        storageUser.setPassword(user.getPassword());
-        storageUser.setRoles(user.getRoles());
-
-        userRepository.update(storageUser);
+        userRepository.update(optionalUser.get());
     }
 
     @Override
