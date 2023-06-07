@@ -95,6 +95,20 @@ public class BonusController {
         return "/bonus/edit";
     }
 
+    @GetMapping("/delete/{bonusId}")
+    public String getDelete(@PathVariable Long bonusId, Model model) {
+
+        var optionalBonus = bonusRepository.getById(bonusId);
+
+        if (optionalBonus.isEmpty()) {
+            return "redirect:/bonus/index";
+        }
+
+        bonusRepository.remove(optionalBonus.get());
+
+        return "redirect:/bonus/index";
+    }
+
     @PostMapping("/edit/{bonusId}")
     public String postEdit(
             @PathVariable Long bonusId,
@@ -156,6 +170,27 @@ public class BonusController {
         }
 
         bonusService.addBonusToUser(optionalBonus.get(), optionalUser.get());
+
+        return "redirect:/bonus/users";
+    }
+
+    @GetMapping("/users/{userId}/delete/{bonusId}")
+    public String getUserDelete(@PathVariable Long userId, @PathVariable Long bonusId, Model model) {
+
+        var optionalUser = userRepository.getById(userId);
+        var optionalBonus = bonusRepository.getById(bonusId);
+
+        if (optionalUser.isEmpty() || optionalBonus.isEmpty()) {
+            return "redirect:/bonus/users";
+        }
+
+        var bonus = bonusService.getBonusesForUser(optionalUser.get()).stream().filter(x -> x.getBonusId().equals(bonusId)).findFirst();
+
+        if (bonus.isEmpty()) {
+            return "redirect:/bonus/users";
+        }
+
+        bonusRepository.removeUserBonus(bonus.get());
 
         return "redirect:/bonus/users";
     }

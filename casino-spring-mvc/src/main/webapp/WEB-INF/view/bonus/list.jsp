@@ -42,7 +42,7 @@
             <c:forEach items="${list}" var="bonus">
               <spring:url value="/bonus/edit/${bonus.getId()}" var="editLink" />
               <spring:url
-                value="/bonus/edit/${bonus.getId()}"
+                value="/bonus/delete/${bonus.getId()}"
                 var="removeLink"
               />
               <tr>

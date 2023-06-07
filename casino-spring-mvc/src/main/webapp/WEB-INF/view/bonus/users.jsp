@@ -68,7 +68,7 @@
 
                 <c:forEach items="${usersBonusMap.get(userLogin)}" var="usersBonus">
                     <spring:url value="/bonus/users/${usersBonus.userId}/enable/${usersBonus.bonusId}" var="enableLink" />
-                    <spring:url value="/index" var="deleteLink" />
+                    <spring:url value="/bonus/users/${usersBonus.userId}/delete/${usersBonus.bonusId}" var="deleteLink" />
                     <div class="col-md-4">
                         <div class="row">
                             <h3 class = "col-md-4"><u><c:out value="${bonusMap.get(usersBonus.getBonusId())}" /></u></h3>

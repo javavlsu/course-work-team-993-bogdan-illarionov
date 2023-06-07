@@ -76,6 +76,11 @@ public class BonusRepository implements IBonusRepository {
     }
 
     @Override
+    public void removeUserBonus(StorageUserBonus userBonus) {
+        userBonusRepository.delete(userBonus);
+    }
+
+    @Override
     public void updateBonusConfig(StorageBonus bonus) {
         var newConfig = bonus.getConfig();
 
