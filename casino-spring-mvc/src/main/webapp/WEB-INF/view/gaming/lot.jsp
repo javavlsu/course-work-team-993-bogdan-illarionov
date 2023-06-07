@@ -34,7 +34,7 @@
                 <form:input class="form-control" type="number" step="0.01" id="sizeOfBet" path = "betSize"/>
                 <form:errors path="betSize" cssClass="error"/>
               </div>
-              <div class="col-md-5">
+              <div class="col-md-8">
                 <form:select path="outcomeId">
                     <form:option value="0" label="Выберите исход"/>
                     <form:options items="${outcomesMap}" />
@@ -55,16 +55,31 @@
           <div class="row h-25">
             <div class="col text-info"><h2><c:out value="${lot.getDescription()}" /></h2></div>
           </div>
-          <div class="row" style = "border-bottom: 1px solid black;">
-            <c:if test="${gameResult != null}">
-              <c:if test="${gameWin == true}">
-                  <h3 align="center"><c:out value="Congratulations!" /></h3>
+          <div class="row" style = "border-top: 1px solid black;">
+            <div class="col-md-8">
+              <c:if test="${gameResult != null}">
+                <div class="row">
+                  <div class="col-md-8">
+                    <c:if test="${gameWin == true}">
+                      <h2>You <b class = "text-danger">WIN</b>!</h2>
+                    </c:if>
+                    <c:if test="${gameWin == false}">
+                      <h2 class = "text-dark"><c:out value="Better luck next time!"/></h2>
+                    </c:if>  
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <h3>
+                      <u>Game result:</u>
+                    </h3>
+                  </div>
+                  <div class="col-md-6">
+                    <h2><c:out value="${gameResult}" /></h2>
+                  </div>
+                </div>
               </c:if>
-              <c:if test="${gameWin == false}">
-                  <h3 align="center"><c:out value="Very sorry. Next time you will definitely be lucky!" /></h3>
-              </c:if>
-              <h3 align="center"><c:out value="Game result is: ${gameResult}!" /></h3>
-          </c:if>
+            </div>  
           </div>
         </div>
       </div>
