@@ -13,39 +13,60 @@
   <body>
     <jsp:include page="../shared/_nav.jsp" />
     <main class="content">
-        <br/>
-        <spring:url value="/bonus/create" var="createLink" />
-        <h2>Add new bonus</h2>
-        <a class="btn btn-primary" href="${createLink}"><h3>Create</h3></a>
-        <br/>
-        <br/>
-        <div class="row form-group">
-                   <table class="table bg-light text-dark">
-                    <thead>
-                        <tr>
-                            <th>id</th>
-                            <th>name</th>
-                            <th>trigger</th>
-                            <th>expire</th>
-                            <th>enabled</th>
-                            <th>edit</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <c:forEach items="${list}" var="bonus">
-                            <spring:url value="/bonus/edit/${bonus.getId()}" var="editLink" />
-                            <tr>
-                               <td><c:out value="${bonus.getId()}" /></td>
-                               <td><c:out value="${bonus.getName()}" /></td>
-                               <td><c:out value="${bonus.getStringTriggerType()}" /></td>
-                               <td><c:out value="${bonus.getStringExpireType()}" /></td>
-                               <td><c:out value="${bonus.getIsEnabled()}" /></td>
-                               <td><a class="btn btn-info" href="${editLink}">Edit</a></td>
-                            </tr>
-                        </c:forEach>
-                    </tbody>
-                   <table>
+      <br />
+      <spring:url value="/bonus/create" var="createLink" />
+      <div class="row">
+        <div class="col-md-2">
+          <h2>Add bonus:</h2>
         </div>
-      </main>
+        <div class="col-md-4">
+          <a class="btn btn-primary" href="${createLink}"><h4>New</h4></a>
+        </div>
+      </div>
+      <br />
+      <br />
+      <div class="row form-group">
+        <table class="table bg-light text-dark">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Name</th>
+              <th>Trigger</th>
+              <th>Expire</th>
+              <th>Enabled</th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <c:forEach items="${list}" var="bonus">
+              <spring:url value="/bonus/edit/${bonus.getId()}" var="editLink" />
+              <spring:url
+                value="/bonus/edit/${bonus.getId()}"
+                var="removeLink"
+              />
+              <tr>
+                <td><c:out value="${bonus.getId()}" /></td>
+                <td><c:out value="${bonus.getName()}" /></td>
+                <td><c:out value="${bonus.getStringTriggerType()}" /></td>
+                <td><c:out value="${bonus.getStringExpireType()}" /></td>
+                <td>
+                  <c:if test="${bonus.isEnabled}">
+                    <h4>&#9989;</h4>
+                  </c:if>
+                  <c:if test="${!bonus.isEnabled}">
+                    <h3 class="text-dark">&#10060;</h3>
+                  </c:if>
+                </td>
+                <td><a class="btn btn-dark" href="${editLink}">Edit</a></td>
+                <td>
+                  <a class="btn btn-danger" href="${removeLink}">Remove</a>
+                </td>
+              </tr>
+            </c:forEach>
+          </tbody>
+        </table>
+      </div>
+    </main>
   </body>
 </html>

@@ -110,10 +110,6 @@ public class BonusController {
             return "redirect:/bonus/index";
         }
 
-        //todo hidden fields
-        viewModel.setId(optionalOldBonus.get().getId());
-        viewModel.setTriggerActionTypeId(optionalOldBonus.get().getTriggerActionId());
-        viewModel.setExpireTypeId(optionalOldBonus.get().getExpireTypeId());
 
         var bonus = EditBonusViewModel.ToModel(viewModel);
 

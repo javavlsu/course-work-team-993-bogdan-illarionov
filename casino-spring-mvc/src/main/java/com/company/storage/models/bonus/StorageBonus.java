@@ -55,7 +55,7 @@ public class StorageBonus {
     public String getStringTriggerType() {
         return switch (triggerActionId) {
             case BALANCE_ADD_ACTION_ID -> "Balance Add";
-            case LOT_WIN_ACTION_ID -> "Low win";
+            case LOT_WIN_ACTION_ID -> "Lot win";
             case LOT_PLAY_ACTION_ID -> "Lot play";
             default -> "None";
         };

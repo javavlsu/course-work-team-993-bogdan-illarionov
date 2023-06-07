@@ -1,5 +1,7 @@
 package com.company.models.view.bonus;
 
+import com.company.annotations.NotNullBonusFieldForExpireType;
+import com.company.annotations.NotNullBonusFieldForTriggerAction;
 import com.company.storage.models.bonus.StorageBonus;
 import com.company.storage.models.bonus.StorageBonusConfig;
 import jakarta.annotation.Nullable;
@@ -19,6 +21,8 @@ import java.util.Arrays;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@NotNullBonusFieldForTriggerAction(fieldName = "triggerActionTypeId")
+@NotNullBonusFieldForExpireType(fieldName = "expireTypeId")
 public class EditBonusViewModel {
 
     private Long id;
@@ -181,7 +185,7 @@ public class EditBonusViewModel {
     public String getStringTriggerType() {
         return switch (triggerActionTypeId) {
             case StorageBonus.BALANCE_ADD_ACTION_ID -> "Balance Add";
-            case StorageBonus.LOT_WIN_ACTION_ID -> "Low win";
+            case StorageBonus.LOT_WIN_ACTION_ID -> "Lot win";
             case StorageBonus.LOT_PLAY_ACTION_ID -> "Lot play";
             default -> "None";
         };
