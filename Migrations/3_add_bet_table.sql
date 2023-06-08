@@ -1,0 +1,43 @@
+BEGIN;
+
+DROP TABLE IF EXISTS bets;
+
+CREATE TABLE bets(
+    user_id BIGINT NOT NULL,
+	FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    outcome_id BIGINT NOT NULL,
+	FOREIGN KEY (outcome_id) REFERENCES outcomes (id) ON DELETE CASCADE,
+    sum DECIMAL NOT NULL,
+	status INTEGER NOT NULL,
+    last_update TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+
+CREATE OR REPLACE FUNCTION update_bets()
+RETURNS TRIGGER
+AS
+$trg$
+BEGIN
+	NEW.last_update = NOW();
+	RETURN NEW;
+END
+$trg$
+LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_update_bets ON bets;
+CREATE TRIGGER trg_update_bets BEFORE UPDATE ON bets
+    FOR EACH ROW
+    EXECUTE PROCEDURE update_bets();
+	
+
+DROP TABLE IF EXISTS db_version;
+
+CREATE TABLE db_version(
+    version INT NOT NULL,
+	update_date TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+INSERT INTO db_version
+VALUES (3);
+
+COMMIT;
